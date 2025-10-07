@@ -32,3 +32,4 @@
 // export const removePerm = (perm: number, method: PermMethod) => {
 //   return perm & ~(1 << method);
 // };
+export {};
