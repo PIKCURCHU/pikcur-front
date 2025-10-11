@@ -5,7 +5,7 @@ interface InfoListProps {
     labelMap: Record<string, string>;
 }
 
-/** 공통 Table 컴포넌트
+/** 공통 InfoList 컴포넌트
  * @example
  * <InfoList
  *      data={{
