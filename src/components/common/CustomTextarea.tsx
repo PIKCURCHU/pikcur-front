@@ -36,6 +36,7 @@ const StyledTextarea = styled.textarea<StyledTextareaProps>`
  * @param width 가로 크기 (px)
  * @param height 세로 크기 (px)
  * @param placeholder placeholder 텍스트
+ * @returns 
  */
 const CustomTextarea: React.FC<CustomTextareaProps> = ({ width, height, placeholder }) => {
   return (
