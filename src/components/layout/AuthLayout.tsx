@@ -5,8 +5,7 @@ import Footer from '../common/Footer';
 interface AuthLayoutProps {
     title: string;
     errorMsg?: string;
-    children?: React.ReactNode;
-    showError?: boolean;
+    content?: React.ReactNode;
 }
 
 /** 로그인, 회원가입, 비밀번호/아이디 찾기 화면에서 사용할 Layouot 컴포넌트
@@ -23,11 +22,11 @@ interface AuthLayoutProps {
  * 
  * @param title 화면 상단에 표시될 제목
  * @param erroMsg 특정 로직 실행 후 화면에 표시될 에러 메시지
- * @param children 화면에 들어갈 컴포넌트
+ * @param content 화면에 들어갈 컴포넌트
  * @param showError errorMsg 표시 여부
  * @returns 
  */
-const AuthLayout: React.FC<AuthLayoutProps> = ({ title, errorMsg, children, showError }) => {
+const AuthLayout: React.FC<AuthLayoutProps> = ({ title, errorMsg, content }) => {
 
     return (
         <>
@@ -44,7 +43,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ title, errorMsg, children, show
                     }}>{title}
                     </div>
 
-                    {showError && (
+                    {errorMsg && (
                         <div
                             style={{
                                 display: 'flex',
@@ -60,7 +59,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ title, errorMsg, children, show
                     )}
 
                     <div style={{ paddingTop: 54, display: 'flex', justifyContent: 'center' }}>
-                        {children}
+                        {content}
                     </div>
                 </div>
             </div>
