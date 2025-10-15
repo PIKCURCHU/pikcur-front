@@ -11,7 +11,8 @@ interface HeaderProps {
 }
 
 /** 공통 SearchInput 컴포넌트
- * 
+ *
+ * @TODO React Router 적용, searchInput onSubmit 기능 구현
  * @param isBasic Basic Layout 여부 (true: Basic Layout, false: Auth Layout)) - 기본값은 true
  * @param isAuth 인증 여부 (true: 로그아웃 표출, false: 로그인 표출)
  * @param onSubmit SearchInput의 버튼 클릭 or 엔터 이벤트 함수

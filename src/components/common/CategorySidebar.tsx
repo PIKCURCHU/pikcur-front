@@ -6,6 +6,10 @@ interface CategoryData {
   [key: string]: string[];
 }
 
+interface CategorySidebarProps {
+  style?: React.CSSProperties;
+}
+
 // 카테고리 데이터 - DB에서 받아올 예정
 const categoryData: CategoryData = {
   '아우터': ['후드집업', '트러커 자켓', '블루종 / MA-1', '블레이저 자켓', '레더자켓', '사파리 / 헌팅자켓', '가디건', '베스트'],
@@ -21,11 +25,15 @@ const categoryData: CategoryData = {
 
 /** 카테고리 바 컴포넌트
  * 
+ * @param style 스타일 커스터마이징
  * @returns 
  */
-const CategorySidebar: React.FC = () => {
+const CategorySidebar: React.FC<CategorySidebarProps> = ({ style }) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [hoveredCategory, setHoveredCategory] = React.useState<string>('');
+  const [fixedHeight, setFixedHeight] = React.useState<number | undefined>(undefined);
+
+  const listRef = React.useRef<HTMLUListElement | null>(null);
 
   const handlePopoverOpen = (
     event: React.MouseEvent<HTMLElement>,
@@ -42,20 +50,29 @@ const CategorySidebar: React.FC = () => {
 
   const open = Boolean(anchorEl);
 
+  React.useEffect(() => {
+    if (listRef.current) {
+      setFixedHeight(listRef.current.offsetHeight + 90);
+    }
+  }, []);
+
   return (
-    <Box sx={{ display: 'flex', }} onMouseLeave={handlePopoverClose}>
-      {/* 왼쪽 기본 카테고리 목록 */}
-      <Paper elevation={2} sx={{ width: 200, backgroundColor:"#F2F2F2", border: "1px solid #D9D9D9", borderRadius:"8px" }} >
-        <p style={{fontWeight: "bold", fontSize: "20px", textAlign:"left", marginLeft:"15px"}}>Category</p>
-        <List sx={{marginBottom:"10px"}}>
+    <Box
+      sx={{ display: 'flex' }}
+      onMouseLeave={handlePopoverClose}
+      style={{ ...style, height: fixedHeight ? `${fixedHeight}px` : 'auto' }}
+    >      {/* 왼쪽 기본 카테고리 목록 */}
+      <Paper elevation={2} sx={{ width: 200, backgroundColor: "#F2F2F2", border: "1px solid #D9D9D9", borderRadius: "8px" }} >
+        <p style={{ fontWeight: "bold", fontSize: "20px", textAlign: "left", marginLeft: "15px" }}>Category</p>
+        <List ref={listRef} sx={{ marginBottom: "10px" }}>
           {Object.keys(categoryData).map((category) => (
             <ListItem
               key={category}
               onMouseEnter={(e) => handlePopoverOpen(e, category)}
               sx={{
                 '&:hover': {
-                  backgroundColor: 'white', 
-                  cursor: 'pointer', 
+                  backgroundColor: 'white',
+                  cursor: 'pointer',
                 },
               }}
             >
@@ -75,7 +92,7 @@ const CategorySidebar: React.FC = () => {
       >
         <Paper elevation={2} sx={{ p: 2, width: 400 }}>
           <Box sx={{ mb: 1.5 }}>
-            <Link href="#" underline="hover" sx={{ fontWeight: 'bold', color:"black" }}>
+            <Link href="#" underline="hover" sx={{ fontWeight: 'bold', color: "black" }}>
               {`${hoveredCategory} 전체보기 >`}
             </Link>
           </Box>
