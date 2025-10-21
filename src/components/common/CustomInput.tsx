@@ -5,6 +5,7 @@ interface CustomInputProps {
     height: number;
     placeholder?: string;
     fontSize?: number;
+    type?: string;
 }
 
 /** 공통 input 컴포넌트
@@ -15,9 +16,9 @@ interface CustomInputProps {
  * @param fontSize 텍스트 박스 글자 크기
  * @returns 
  */
-const CustomInput: React.FC<CustomInputProps> = ({ width, height, placeholder, fontSize }) => {
+const CustomInput: React.FC<CustomInputProps> = ({ width, height, placeholder, fontSize = 16, type = "text" }) => {
     return (
-        <input type="text" placeholder={placeholder} style={{
+        <input type={type} placeholder={placeholder} style={{
             width: width,
             height: height,
             border: '1px solid #E0E0E0',
@@ -25,6 +26,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ width, height, placeholder, f
             backgroundColor: '#FFFFFF',
             padding: '0px 8px',
             fontSize: `${fontSize}px`,
+            lineHeight: `${height}px`,
         }} />
     );
 }
