@@ -17,8 +17,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ content }) => {
             <div style={{ minHeight: '100vh' }}>
                 <Header />
                 <div style={{
-                    marginLeft: '110px',
-                    marginRight: '110px',
+                    marginLeft: '220px',
+                    marginRight: '220px',
                     display: 'flex',
                     flexDirection: 'column',
                     minHeight: 'calc(100vh - 154px)',

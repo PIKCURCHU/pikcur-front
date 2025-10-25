@@ -34,7 +34,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({onUpload}) => {
             alignItems: "center",
             justifyContent: "center",
             borderRadius: "8px", 
-            border: '1px dashed #FFFFFF', 
+            border: '1px dashed #E0E0E0', 
             width: "301px", 
             height: "301px"}}>
         

@@ -1,11 +1,13 @@
 import * as React from 'react';
 
 interface CustomInputProps {
-    width: number;
+    width: number | string;
     height: number;
     placeholder?: string;
     fontSize?: number;
     type?: string;
+    value?: string;
+    disabled?: boolean;
 }
 
 /** 공통 input 컴포넌트
@@ -14,11 +16,13 @@ interface CustomInputProps {
  * @param height 세로 크기
  * @param placeholder placeholder 텍스트
  * @param fontSize 텍스트 박스 글자 크기
+ * @param value 텍스트 
+ * @param disabled
  * @returns 
  */
-const CustomInput: React.FC<CustomInputProps> = ({ width, height, placeholder, fontSize = 16, type = "text" }) => {
+const CustomInput: React.FC<CustomInputProps> = ({ width, height, placeholder, fontSize, type, value, disabled }) => {
     return (
-        <input type={type} placeholder={placeholder} style={{
+        <input type={type} placeholder={placeholder} value={value} disabled={disabled} style={{
             width: width,
             height: height,
             border: '1px solid #E0E0E0',

@@ -3,7 +3,7 @@ import cameraIcon from '../../assets/images/camera.png';
 
 interface ImagePreviewProps {
     images: string[];
-    onRemove: (index: number) => void;
+    onRemove?: (index: number) => void;
 }
 
 /** 이미지 미리보기 컴포넌트 - 삭제 기능 포함
@@ -33,7 +33,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({images, onRemove}) => {
                         objectFit: 'cover', 
                         borderRadius: '8px' 
                     }} />
-                    <button 
+                    {onRemove && <button 
                         onClick={() => onRemove(index)} // X 버튼 클릭 시 onRemove 함수 호출
                         style={{
                             position: 'absolute', top: '8px', right: '8px',
@@ -43,7 +43,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({images, onRemove}) => {
                             display: 'flex', alignItems: 'center', justifyContent: 'center'
                         }}>
                         ×
-                    </button>
+                    </button>}
                 </div>
             ))}
         </div>

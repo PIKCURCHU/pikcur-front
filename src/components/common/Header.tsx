@@ -19,6 +19,11 @@ interface HeaderProps {
  * @returns 
  */
 const Header: React.FC<HeaderProps> = ({ isBasic = true, isAuth, onSubmit }) => {
+const [isContactHovered, setIsContactHovered] = React.useState<boolean>(false);
+const [isHomeHovered, setIsHomeHovered] = React.useState<boolean>(false);
+const [isFAQHovered, setIsFAQHovered] = React.useState<boolean>(false);
+const [isQnaHovered, setIsQnaHovered] = React.useState<boolean>(false);
+
     return (
         <div style={{ height: '105px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #F2F2F2' }}>
             <div style={{ width: '200px', paddingLeft: '20px' }}>
@@ -27,10 +32,75 @@ const Header: React.FC<HeaderProps> = ({ isBasic = true, isAuth, onSubmit }) => 
 
             {isBasic && (
                 <>
-                    <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%', width: '336px' }}>
-                        <div style={{ fontSize: 22 }}>Home</div>
-                        <div style={{ fontSize: 22 }}>Contact Us</div>
+                    <div style={{display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%', width: '336px' }}>
+                        <div style={{ 
+                            fontSize: 22,
+                            position:'relative',
+                            cursor:'pointer',
+                            height:"100%",
+                            width:"100%",
+                            display:'flex',
+                            alignItems:"center",
+                            justifyContent: 'center',
+                            fontWeight: isHomeHovered ? 'bold' : 'normal'
+                            }}
+                            onMouseEnter={()=>setIsHomeHovered(true)}
+                            onMouseLeave={()=>setIsHomeHovered(false)}
+                            >Home</div>
+                        <div style={{ 
+                            fontSize: 22,
+                            position:'relative',
+                            cursor:'pointer',
+                            height:"100%",
+                            width:"100%",
+                            display:'flex',
+                            alignItems:"center",
+                            justifyContent: 'center',
+                            fontWeight: isContactHovered ? 'bold' : 'normal'
+                            }}
+                            onMouseEnter={()=>setIsContactHovered(true)}
+                            onMouseLeave={()=>setIsContactHovered(false)}>
+                                Contact Us
+                            {/* contact 드롭다운 */}
+                            {isContactHovered && (
+                                <div style={{
+                                    width: '100%',
+                                    position:'absolute',
+                                    top:'100%',
+                                    zIndex: '1300',
+                                    backgroundColor: 'white',
+                                    border: '1px solid #E0E0E0'}}>
+                                        <div style={{
+                                            display:'flex',
+                                            justifyContent: 'flex-start',
+                                            paddingLeft:'30px',
+                                            alignItems: 'center',
+                                            height:'80px',
+                                            fontWeight: isFAQHovered ? 'bold' : 'normal'
+                                        }}
+                                        onMouseEnter={()=>setIsFAQHovered(true)}
+                                        onMouseLeave={()=>setIsFAQHovered(false)}
+                                        onClick={()=>{}}
+                                        >FAQ</div>
+                                        <div style={{
+                                            display:'flex',
+                                            justifyContent: 'flex-start',
+                                            paddingLeft:'30px',
+                                            alignItems: 'center',
+                                            height:'80px',
+                                            fontWeight: isQnaHovered ? 'bold' : 'normal'
+                                        }}
+                                        onMouseEnter={()=>setIsQnaHovered(true)}
+                                        onMouseLeave={()=>setIsQnaHovered(false)}
+                                        onClick={()=>{}}
+                                        >1:1 문의</div>
+                                </div>
+                            )}
+                        </div>
+                        
                     </div>
+
+                    
 
                     <div style={{ flex: 1 }} />
 

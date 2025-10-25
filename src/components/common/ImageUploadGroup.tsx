@@ -17,13 +17,16 @@ interface ImageUploadGroupProps{
 /** 이미지 업로드 버튼, 미리보기를 모두 포함한 그룹 컴포넌트
  * 
  * @example
+ * interface ImageState {
+    file: File;
+    previewUrl: string;
+ *  }
+ *
+ * const [images, setImages] = useState<ImageState[]>([]);
+ * 
  * <ImageUploadGroup 
  *  maxCount={3} 
- *  images={[
- *      { file: , previewUrl: },
- *      { file: , previewUrl: },
- *      { file: , previewUrl: }
- *  ]} 
+ *  images={images} 
  *  setImages={setImages}/>
  * 
  * @param maxCount 업로드 가능한 이미지의 개수
@@ -63,7 +66,6 @@ const ImageUploadGroup: React.FC<ImageUploadGroupProps> = ({maxCount, images, se
 
     return (
         <div className="App" style={{
-            backgroundColor:"#757575",
             display: 'flex',     
             flexWrap: 'wrap',    
             gap: '9px'           
