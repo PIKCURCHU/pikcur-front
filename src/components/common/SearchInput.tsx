@@ -3,7 +3,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import * as React from 'react';
 
 interface SearchInputProps {
-    width: number;
+    width: number | string;
     height: number;
     placeholder: string;
     onSubmit: () => void;

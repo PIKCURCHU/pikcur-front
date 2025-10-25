@@ -5,11 +5,16 @@ interface CustomTextareaProps {
   width: number;
   height: number;
   placeholder: string; 
+  fontSize: number;
+  value?: string;
+  disabled?: boolean;
 }
 
 interface StyledTextareaProps {
   width: number;
   height: number;
+  fontSize: number;
+  disabled?: boolean;
 }
 
 const StyledTextarea = styled.textarea<StyledTextareaProps>`
@@ -22,7 +27,7 @@ const StyledTextarea = styled.textarea<StyledTextareaProps>`
   resize: none;
   outline: none;
   font-family: inherit;
-  font-size: 16px;
+  font-size: ${(props) => props.fontSize}px;
 
   /* placeholder 색상 지정 */
   &::placeholder {
@@ -36,14 +41,20 @@ const StyledTextarea = styled.textarea<StyledTextareaProps>`
  * @param width 가로 크기 (px)
  * @param height 세로 크기 (px)
  * @param placeholder placeholder 텍스트
+ * @param fontSize
+ * @param value 
+ * @param disabled
  * @returns 
  */
-const CustomTextarea: React.FC<CustomTextareaProps> = ({ width, height, placeholder }) => {
+const CustomTextarea: React.FC<CustomTextareaProps> = ({ width, height, placeholder, fontSize, value, disabled }) => {
   return (
     <StyledTextarea
       width={width}
       height={height}
       placeholder={placeholder}
+      fontSize={fontSize}
+      value={value}
+      disabled={disabled}
     />
   );
 };

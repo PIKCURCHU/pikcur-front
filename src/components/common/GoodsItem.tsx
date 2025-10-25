@@ -93,7 +93,7 @@ const GoodsItem: React.FC<GoodsItemProps> = ({
 
     return (
         <>
-            <Card sx={{ width: 160, height: 263, backgroundColor: 'inherit', border: 'none', boxShadow: 'none' }} onClick={onClick}>
+            <Card sx={{ width: 160, height: 270, backgroundColor: 'inherit', border: 'none', boxShadow: 'none' }} onClick={onClick}>
                 <Box sx={{ position: 'relative' }}>
                     <CardMedia
                         component="img"
@@ -111,6 +111,7 @@ const GoodsItem: React.FC<GoodsItemProps> = ({
                             '&:active': {
                                 filter: 'brightness(0.80)',
                             },
+                            backgroundColor:'red'
                         }}
                     />
                     <FontAwesomeIcon

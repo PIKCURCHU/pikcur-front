@@ -4,8 +4,8 @@ import Footer from '../common/Footer';
 import CategorySidebar from '../common/CategorySidebar';
 
 interface WithCategoryLayoutProps {
-    topContent?: React.ReactNode;
-    middleTopContent: React.ReactNode;
+    topContent: React.ReactNode;
+    middleTopContent?: React.ReactNode;
     middleBottomContent: React.ReactNode;
 }
 
@@ -22,16 +22,20 @@ const WithCategoryLayout: React.FC<WithCategoryLayoutProps> = ({ topContent, mid
             <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
                 <Header />
                 <div style={{ flex: 1, marginRight: '110px', display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ height: '239px' }}>
+                    <div style={{ height: '239px', marginLeft: '303px' }}>
                         {topContent}
                     </div>
 
-                    <div style={{ display: 'flex', flex: 1 }}>
+                    <div style={{ display: 'flex', flex: 1}}>
                         <div style={{ width: '303px', display: 'flex', justifyContent: 'center' }}>
                             <CategorySidebar style={{ position: 'sticky', top: '60px', height: '100vh' }} />
                         </div>
                         <div style={{ flex: 1 }}>
-                            <div style={{ height: '138px' }}>{middleTopContent}</div>
+                        {middleTopContent && (
+                                <div style={{ height: '138px'}}>
+                                    {middleTopContent}
+                                </div>
+                        )}
                             <div>{middleBottomContent}</div>
                         </div>
                     </div>

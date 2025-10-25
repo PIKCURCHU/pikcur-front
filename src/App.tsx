@@ -9,6 +9,11 @@ import FindPasswordSuccess from './pages/Auth/FindAccount/FindPasswordSuccess';
 import SignUp from './pages/Auth/SignUp/SignUp';
 import TermsOfService from './pages/Auth/SignUp/TermsOfService';
 import SignUpSuccess from './pages/Auth/SignUp/SignUpSuccess';
+import Header from './components/common/Header';
+import SearchPage from './pages/Main/SearchPage';
+import MainPage from './pages/Main/MainPage';
+import QuestionForm from './pages/Contact/1by1QnA/QuestionForm';
+import QuestionDetail from './pages/Contact/1by1QnA/QuestionDetail';
 
 function App() {
   return (
@@ -18,7 +23,10 @@ function App() {
       {/* <FindPasswordSuccess /> */}
       {/* <SignUp /> */}
       {/* <TermsOfService /> */}
-      <SignUpSuccess></SignUpSuccess>
+      {/* <SignUpSuccess></SignUpSuccess> */}
+      {/* <SearchPage></SearchPage> */}
+      {/* <MainPage></MainPage> */}
+      <QuestionDetail></QuestionDetail>
     </div>
   );
 }

@@ -62,7 +62,7 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ style }) => {
       onMouseLeave={handlePopoverClose}
       style={{ ...style, height: fixedHeight ? `${fixedHeight}px` : 'auto' }}
     >      {/* 왼쪽 기본 카테고리 목록 */}
-      <Paper elevation={2} sx={{ width: 200, backgroundColor: "#F2F2F2", border: "1px solid #D9D9D9", borderRadius: "8px" }} >
+      <Paper elevation={2} sx={{ width: 258, backgroundColor: "#F2F2F2", border: "1px solid #D9D9D9", borderRadius: "8px" }} >
         <p style={{ fontWeight: "bold", fontSize: "20px", textAlign: "left", marginLeft: "15px" }}>Category</p>
         <List ref={listRef} sx={{ marginBottom: "10px" }}>
           {Object.keys(categoryData).map((category) => (
