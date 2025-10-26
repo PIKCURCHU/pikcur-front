@@ -14,6 +14,7 @@ import SearchPage from './pages/Main/SearchPage';
 import MainPage from './pages/Main/MainPage';
 import QuestionForm from './pages/Contact/1by1QnA/QuestionForm';
 import QuestionDetail from './pages/Contact/1by1QnA/QuestionDetail';
+import QuestionList from './pages/Contact/1by1QnA/QuestionList';
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
       {/* <SignUpSuccess></SignUpSuccess> */}
       {/* <SearchPage></SearchPage> */}
       {/* <MainPage></MainPage> */}
-      <QuestionDetail></QuestionDetail>
+      <QuestionList></QuestionList>
     </div>
   );
 }

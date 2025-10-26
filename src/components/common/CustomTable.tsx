@@ -2,7 +2,7 @@ import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 
 interface CustomTableProps {
-    width: number;
+    width: number | string;
     columns: ColumnDef[];
     dataList: any[];
     onRowClick?: (row: any) => void;
@@ -53,6 +53,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
+                                    textAlign:'center'
                                 }}>
                                 {col.headerName}
                             </TableCell>
@@ -78,6 +79,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
+                                    textAlign:'center'
                                 }}>
                                     {col.render ? col.render(row[col.field], row) : row[col.field]}
                                 </TableCell>
