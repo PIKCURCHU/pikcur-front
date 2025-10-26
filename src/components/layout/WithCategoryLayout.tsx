@@ -32,7 +32,7 @@ const WithCategoryLayout: React.FC<WithCategoryLayoutProps> = ({ topContent, mid
                         </div>
                         <div style={{ flex: 1 }}>
                         {middleTopContent && (
-                                <div style={{ height: '138px'}}>
+                                <div>
                                     {middleTopContent}
                                 </div>
                         )}

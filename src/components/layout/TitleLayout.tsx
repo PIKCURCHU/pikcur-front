@@ -43,7 +43,7 @@ const TitleLayout: React.FC<TitleLayoutProps> = ({ title, subTitle, content, lef
                         {content}
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, paddingBottom: 16 }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, paddingBottom: 36 }}>
                         {leftButtonName && (
                             <Button
                                 style={{

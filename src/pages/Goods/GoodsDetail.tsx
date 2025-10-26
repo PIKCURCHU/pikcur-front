@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import BaseLayout from '../../components/layout/BaseLayout';
 import GoodsGallery from './Component/GoodsGallery';
 import { faHeart } from '@fortawesome/free-regular-svg-icons';
@@ -7,8 +7,24 @@ import { Button } from '@mui/material';
 import CustomAvatar from '../../components/common/CustomAvatar';
 import ReviewSummary from '../../components/common/ReviewSummary';
 import CustomTable from '../../components/common/CustomTable';
+import CustomModal from '../../components/common/CustomModal';
+import {
+  faFlag,
+  faTriangleExclamation,
+  faCircleExclamation,
+  faShieldHalved,
+  faBan
+} from '@fortawesome/free-solid-svg-icons';
 
+
+/**
+ * 
+ * 상품 상세 페이지
+ */
 const GoodsDetail: React.FC = () => {
+    const payModalRef = useRef<any>(null);
+    const reportModalRef = useRef<any>(null);
+
     return (
         <>
             <BaseLayout
@@ -74,6 +90,27 @@ const GoodsDetail: React.FC = () => {
                                     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12 }}>
                                         <button
                                             type="button"
+                                            aria-label="신고"
+                                            style={{
+                                                width: 40,
+                                                height: 40,
+                                                border: '1px solid #E0E0E0',
+                                                borderRadius: 12,
+                                                background: '#FF5050',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                padding: 0,
+                                                fontSize: 12,
+                                                fontWeight: 600,
+                                            }}
+                                            onClick={() => reportModalRef.current?.openModal()}
+                                        >
+                                            <FontAwesomeIcon icon={faBan} style={{ color: '#ffffff', fontSize: 20 }} />
+                                        </button>
+                                        <button
+                                            type="button"
                                             aria-label="찜하기"
                                             style={{
                                                 width: 40,
@@ -91,7 +128,12 @@ const GoodsDetail: React.FC = () => {
                                             <FontAwesomeIcon icon={faHeart} style={{ color: '#FF5050', fontSize: 22 }} />
                                         </button>
                                         <Button style={{ backgroundColor: '#141414', height: 40, width: 120, color: '#FFFFFF' }}>입찰</Button>
-                                        <Button style={{ backgroundColor: '#F2F2F2', height: 40, width: 120, color: '#141414', border: '1px solid #D9D9D9' }}>즉시 결제</Button>
+                                        <Button
+                                            style={{ backgroundColor: '#F2F2F2', height: 40, width: 120, color: '#141414', border: '1px solid #D9D9D9' }}
+                                            onClick={() => payModalRef.current?.openModal()}
+                                        >
+                                            즉시 결제
+                                        </Button>
                                     </div>
                                     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 10, height: '74px' }}>
@@ -135,6 +177,40 @@ const GoodsDetail: React.FC = () => {
                                 />
                             </div>
                         </div>
+
+                        <CustomModal
+                            ref={payModalRef}
+                            title="즉결 신청"
+                            content={
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', alignItems: 'center' }}>
+                                    <div style={{ fontSize: 22, fontWeight: 'bold', color: '#141414' }}>12,000원</div>
+                                    <div style={{ fontSize: 14, fontWeight: 'bold', color: '#757575', paddingBottom: 30 }}>프리즘 워크 헌팅 자켓</div>
+                                    <div style={{ fontSize: 16, fontWeight: 'bold', color: '#141414' }}>해당 상품을 바로 구매하시겠습니까?</div>
+                                </div>
+                            }
+                            leftButtonContent="즉시 결제"
+                            onLeftButtonClick={() => {
+                                alert('결제 처리 로직 실행');
+                                payModalRef.current?.closeModal();
+                            }}
+                        />
+                        <CustomModal
+                            ref={reportModalRef}
+                            title="상품 신고"
+                            content={
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', alignItems: 'center' }}>
+                                    <div style={{ fontSize: 22, fontWeight: 'bold', color: '#141414', visibility: 'hidden' }}>&nbsp;</div>
+                                    <div style={{ fontSize: 14, fontWeight: 'bold', color: '#757575', paddingBottom: 30 }}>프리즘 워크 헌팅 자켓</div>
+                                    <div style={{ fontSize: 16, fontWeight: 'bold', color: '#141414' }}>해당 상품을 신고하시겠습니까?</div>
+                                </div>
+                            }
+                            leftButtonContent="신고"
+                            leftButtonColor="red"
+                            onLeftButtonClick={() => {
+                                alert('신고 처리 로직 실행');
+                                reportModalRef.current?.closeModal();
+                            }}
+                        />
                     </div>
                 }
             />
