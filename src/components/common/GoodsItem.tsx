@@ -111,7 +111,7 @@ const GoodsItem: React.FC<GoodsItemProps> = ({
                             '&:active': {
                                 filter: 'brightness(0.80)',
                             },
-                            backgroundColor:'red'
+                            backgroundColor: 'red'
                         }}
                     />
                     <FontAwesomeIcon
@@ -139,7 +139,15 @@ const GoodsItem: React.FC<GoodsItemProps> = ({
                         opacity: 0.85,
                     },
                 }}>
-                    <Box sx={{ fontWeight: 500, fontSize: 16 }}>{goodsName}</Box>
+                    <Box sx={{
+                        fontWeight: 500,
+                        fontSize: 16,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        display: 'block',
+                        width: '100%'
+                    }}>{goodsName}</Box>
 
                     <Box sx={{ display: 'flex', gap: 1.2, alignItems: 'center' }}>
                         <Box sx={{ fontWeight: 500, fontSize: 12, color: '#676666' }}>현재가</Box>

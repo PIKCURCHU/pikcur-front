@@ -6,6 +6,7 @@ interface CustomTableProps {
     columns: ColumnDef[];
     dataList: any[];
     onRowClick?: (row: any) => void;
+    interactive?: boolean;
 }
 
 /** 공통 Table 컴포넌트
@@ -36,9 +37,10 @@ const CustomTable: React.FC<CustomTableProps> = ({
     columns,
     dataList,
     onRowClick,
+    interactive = true,
 }) => {
     return (
-        <TableContainer component={Paper} sx={{ borderRadius: 2, width: width }}>
+        <TableContainer component={Paper} sx={{ borderRadius: 2, width: width, boxShadow: 'none', border: '1px solid #E0E0E0' }}>
             <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
                 <TableHead>
                     <TableRow>
@@ -62,11 +64,20 @@ const CustomTable: React.FC<CustomTableProps> = ({
                 </TableHead>
 
                 <TableBody>
-                    {dataList.map((row) => (
+                    {dataList.map((row, idx) => (
                         <TableRow
-                            hover
-                            onClick={() => onRowClick?.(row)}
-                            sx={{ cursor: onRowClick ? "pointer" : "default" }}
+                            key={idx}
+                            hover={interactive}
+                            onClick={() => {
+                                if (interactive) onRowClick?.(row);
+                            }}
+                            sx={{
+                                cursor: interactive ? 'pointer' : 'default',
+                                '&:hover': interactive
+                                    ? { backgroundColor: '#F5F5F5' }
+                                    : undefined,
+                                transition: 'background-color 0.15s ease'
+                            }}
                         >
                             {columns.map((col) => (
                                 <TableCell 
