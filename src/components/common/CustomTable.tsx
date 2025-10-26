@@ -2,7 +2,7 @@ import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 
 interface CustomTableProps {
-    width: number;
+    width: number | string;
     columns: ColumnDef[];
     dataList: any[];
     onRowClick?: (row: any) => void;
