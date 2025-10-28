@@ -1,5 +1,6 @@
 import * as React from "react";
-import cameraIcon from '../../assets/images/camera.png'; 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCamera } from "@fortawesome/free-regular-svg-icons";
 
 interface ImageUploaderProps {
     onUpload?: (file: File[]) => void;
@@ -39,7 +40,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({onUpload}) => {
             height: "301px"}}>
         
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
-                <img src={cameraIcon} alt="카메라 아이콘" />
+                <FontAwesomeIcon icon={faCamera} size="5x" color={"#E0E0E0"}/>                 
                 <button 
                     onClick={handleUploadClick}
                     style={{

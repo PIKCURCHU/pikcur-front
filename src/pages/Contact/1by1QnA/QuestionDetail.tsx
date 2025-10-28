@@ -31,13 +31,8 @@ const QuestionDetail: React.FC<{}> = () => {
         answerImages: ['PikcurLogo.png'],
     });
 
-    // 2. 답변 완료 여부 변수
-    const isAnswered = inquiryData.isAnswered;
-    
-    // 3. 버튼 이름 및 핸들러를 답변 완료 여부에 따라 설정
     const buttons = useMemo(() => {
-        //  답변 대기 중일 때 (isAnswered가 false일 때)
-        if (!isAnswered) { 
+        if (!inquiryData.isAnswered) { 
             return {
                 leftName: "답변 등록",
                 rightName: "취소",
@@ -47,7 +42,7 @@ const QuestionDetail: React.FC<{}> = () => {
         } else {
             return null;
         }
-    }, [isAnswered]);
+    }, [inquiryData.isAnswered]);
 
 
     return (
@@ -86,7 +81,7 @@ const QuestionDetail: React.FC<{}> = () => {
                 
 
                 {/*  답변 완료일 때만 답변 내용을 보여줌. */}
-                {isAnswered && (
+                {inquiryData.isAnswered && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
                         <Divider />  
                         <div style={{ fontSize: 18, fontWeight: 'normal', color: '#141414', display:'flex', flexDirection:'column', gap:'11px' }}>

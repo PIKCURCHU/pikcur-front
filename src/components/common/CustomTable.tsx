@@ -55,6 +55,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
+                                    textAlign:'center'
                                 }}>
                                 {col.headerName}
                             </TableCell>
@@ -79,17 +80,18 @@ const CustomTable: React.FC<CustomTableProps> = ({
                             }}
                         >
                             {columns.map((col) => (
-                                <TableCell
-                                    key={col.field}
-                                    align={col.align || "left"}
-                                    sx={{
-                                        fontweight: 400,
-                                        color: '#757575',
-                                        fontSize: 14,
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                    }}>
+                                <TableCell 
+                                key={col.field} 
+                                align={col.align || "left"} 
+                                sx={{
+                                    fontweight: 400, 
+                                    color: '#757575', 
+                                    fontSize: 14, 
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    textAlign:'center'
+                                }}>
                                     {col.render ? col.render(row[col.field], row) : row[col.field]}
                                 </TableCell>
                             ))}
