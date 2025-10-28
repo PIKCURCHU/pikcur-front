@@ -111,7 +111,7 @@ const GoodsItem: React.FC<GoodsItemProps> = ({
                             '&:active': {
                                 filter: 'brightness(0.80)',
                             },
-                            backgroundColor: 'red'
+                            backgroundColor: 'grey'
                         }}
                     />
                     <FontAwesomeIcon

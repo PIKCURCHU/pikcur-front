@@ -1,10 +1,7 @@
-import React, { useState } from "react";
-import TitleLayout from "../../../components/layout/TitleLayout";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
-import PaginationButtons from "../../../components/common/PaginationButtons";
-import CustomTable from "../../../components/common/CustomTable";
+import { FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import CustomTable from '../../../components/common/CustomTable';
+import PaginationButtons from '../../../components/common/PaginationButtons';
 
 interface QnaItemProps {
     id: number;
@@ -13,7 +10,7 @@ interface QnaItemProps {
     createdDate: string;
 }
 
-const qnaList:  QnaItemProps[] = [
+const qnaListExample:  QnaItemProps[] = [
     {
         id: 1,
         title: "입찰 취소 가능한가요?",
@@ -79,14 +76,20 @@ const qnaList:  QnaItemProps[] = [
 const QuestionList: React.FC<{}> = () => {
     const ITEMS_PER_PAGE = 6;
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = Math.ceil(qnaList.length / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(qnaListExample.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    const currentQnaList = qnaList.slice(startIndex, endIndex);
+    const currentQnaList = qnaListExample.slice(startIndex, endIndex);
+
+    const [selectedQnaType, setSelectedQnaType] = useState('sent'); 
+
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setCurrentPage(value);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    const handleChangeQnaType = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedQnaType(event.target.value);
     };
 
     const formattedQnaList = currentQnaList.map((qna, index) => ({
@@ -106,48 +109,38 @@ const QuestionList: React.FC<{}> = () => {
     }));
 
     return (
-        <TitleLayout
-            title={"1대1 문의"}
-            subTitle={'관리자에게 문의하세요.'}
-            content={
-                <div style={{display:'flex', flexDirection: 'column', gap:"20px"}}>
-                    <div style={{
-                        display:'flex',
-                        justifyContent: 'space-between'
-                    }}>
-                    <Typography>문의 내역</Typography>
-                    <Button
-                            type="button"
-                            onClick={() => {console.log("문의 등록하는 페이지로 이동")}}
-                            style={{
-                                backgroundColor: "#141414",
-                                color: "#fff",
-                                width: 93,
-                                height: 40,
-                                fontSize: 14,
-                                borderRadius: 8,
-                            }}>문의하기
-                        </Button>
-                    </div>
-                <CustomTable
-                    width={'100%'}
-                    columns={
-                        [
-                            { field: "title", headerName: "문의 제목" },
-                            { field: "status", headerName: "답변 여부" },
-                            { field: "createdDate", headerName: "날짜" }
-                        ]
-                    }
-                    dataList={formattedQnaList}
-                ></CustomTable>
-                <PaginationButtons 
-                        maxPage={totalPages} 
-                        page={currentPage} 
-                        onChange={handlePageChange}
-                        ></PaginationButtons>
-                </div>
-            }
-        ></TitleLayout>
+        <div>
+            <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={selectedQnaType}
+                onChange={handleChangeQnaType}
+            >
+                <FormControlLabel value="sent" control={<Radio sx={{'&.Mui-checked': {color: 'black', }}}/>} label="남긴 문의" />
+                <FormControlLabel value="received" control={<Radio sx={{'&.Mui-checked': {color: 'black', }}}/>} label="받은 문의" />
+                
+            </RadioGroup> 
+            <div style={{
+                marginTop:'20px',display:'flex', flexDirection: 'column', gap:"20px"
+            }}>
+            <CustomTable
+                width={'100%'}
+                columns={
+                    [   
+                        { field: "title", headerName: "문의 제목" },
+                        { field: "status", headerName: "답변 여부" },
+                        { field: "createdDate", headerName: "날짜" }                          
+                    ]
+                }
+                dataList={formattedQnaList}
+                onRowClick={(row) => console.log("클릭한 행:", row)}></CustomTable>
+            <PaginationButtons
+                maxPage={totalPages} 
+                page={currentPage} 
+                onChange={handlePageChange}></PaginationButtons>
+            </div>
+        </div>
     );
 }
 
