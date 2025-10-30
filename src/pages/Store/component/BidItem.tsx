@@ -1,9 +1,7 @@
-import { FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import CustomTable from '../../../components/common/CustomTable';
 import PaginationButtons from '../../../components/common/PaginationButtons';
-import WinBidItem from './WinBidItem';
-import BidItem from './BidItem';
+import { Typography } from '@mui/material';
 
 interface bidItemProps {
     id: number;
@@ -73,54 +71,55 @@ const bidListExample: bidItemProps[] = [
     }
 ];
 
-const winBidListExample: bidItemProps[] = [
-    {
-        id: 101,
-        title: '클래식 포르쉐 다이캐스트 모델',
-        bidPrice: 150000,
-        status: '낙찰',
-        createDate: '2025-10-25T10:00:00',
-        src: 'https://example.com/auction/porsche_model.jpg'
-    },
-    {
-        id: 102,
-        title: '초기 발행 한정판 코믹스 #1',
-        bidPrice: 3200000,
-        status: '낙찰',
-        createDate: '2025-10-27T14:30:00',
-        src: 'https://example.com/auction/comic_book.jpg'
-    }
-]
+const BidItem: React.FC<{}> = () => {
+    const ITEMS_PER_PAGE = 6;
+    const [currentPage, setCurrentPage] = useState(1);
+    const totalPages = Math.ceil(bidListExample.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const currentBidList = bidListExample.slice(startIndex, endIndex);
 
-
-const BidList: React.FC<{}> = () => {
-    const [selectedBidType, setSelectedBidType] = useState('bid'); 
-
-    const handleChangeBidType = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedBidType(event.target.value);
-    };
-
-    return (
-        <div>
-            <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                value={selectedBidType}
-                onChange={handleChangeBidType}
+    const formattedBidList = currentBidList.map((bid, index) => ({
+        id: bid.id, 
+        title: bid.title,
+        createDate: bid.createDate, 
+        
+        status: (
+            <Typography 
+                fontWeight="bold"
             >
-                <FormControlLabel value="bid" control={<Radio sx={{'&.Mui-checked': {color: 'black', }}}/>} label="입찰" />
-                <FormControlLabel value="winBid" control={<Radio sx={{'&.Mui-checked': {color: 'black', }}}/>} label="낙찰" />
-                
-            </RadioGroup> 
-            {selectedBidType == 'bid' &&
-                <BidItem></BidItem>
+                {bid.status}
+            </Typography>
+        ),
+    }));
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        setCurrentPage(value);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    
+    return (
+        <div style={{
+            marginTop:'20px',display:'flex', flexDirection: 'column', gap:"20px"
+        }}>
+        <CustomTable
+            width={'100%'}
+            columns={
+                [   
+                    { field: "title", headerName: "상품명" },
+                    { field: "bidPrice", headerName: "입찰가" },
+                    { field: "status", headerName: "입찰 상태" },
+                    { field: "createDate", headerName: "날짜" }                          
+                ]
             }
-            {selectedBidType == 'winBid' &&
-                <WinBidItem></WinBidItem>
-            }
+            dataList={formattedBidList}
+            onRowClick={(row) => console.log("클릭한 행:", row)}></CustomTable>
+        <PaginationButtons
+            maxPage={totalPages} 
+            page={currentPage} 
+            onChange={handlePageChange}></PaginationButtons>
         </div>
     );
 }
 
-export default BidList;
+export default BidItem;

@@ -15,6 +15,12 @@ import MainPage from './pages/Main/MainPage';
 import QuestionForm from './pages/Contact/1by1QnA/QuestionForm';
 import QuestionDetail from './pages/Contact/1by1QnA/QuestionDetail';
 import QuestionList from './pages/Contact/1by1QnA/QuestionList';
+import ReviewDetail from './pages/Store/ReviewDetail';
+import StoreDetail from './pages/Store/StoreDetail';
+import ProductQuestionDetail from './pages/Store/ProductQuestionDetail';
+import ProductQuestionForm from './pages/Store/ProductQuestionForm';
+import TransactionDetail from './pages/Store/TransactionDetail';
+import GoodsForm from './pages/Goods/GoodsForm';
 
 function App() {
   return (
@@ -27,7 +33,8 @@ function App() {
       {/* <SignUpSuccess></SignUpSuccess> */}
       {/* <SearchPage></SearchPage> */}
       {/* <MainPage></MainPage> */}
-      <QuestionList></QuestionList>
+      <StoreDetail isMyselfView={true}></StoreDetail>
+      {/* <GoodsForm></GoodsForm> */}
     </div>
   );
 }

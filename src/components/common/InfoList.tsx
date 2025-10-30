@@ -32,7 +32,7 @@ const InfoList: React.FC<InfoListProps> = ({ data, labelMap }) => {
                     key={item.key}
                     style={{
                         borderTop: '1px solid #E5E8EB',
-                        width: index === 0 ? '186px' : '718px',
+                        width: index === 0 ? '20%' : '80%',
                         height: '83px',
                         display: 'flex',
                         flexDirection: 'column',

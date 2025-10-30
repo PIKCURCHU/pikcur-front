@@ -201,7 +201,7 @@ const BrandDetailList: React.FC<BrandDetailListProps> = () => {
                                             ))}
                                         </Select>
                                     </div>
-                                    <div>
+                                    {/* <div>
                                         <RadioGroup
                                             defaultValue="normal"
                                             row
@@ -209,7 +209,7 @@ const BrandDetailList: React.FC<BrandDetailListProps> = () => {
                                             <FormControlLabel value="normal" control={<Radio />} label="일반 거래" />
                                             <FormControlLabel value="action" control={<Radio />} label="경매 거래" />
                                         </RadioGroup>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div>
                                     <Select value={value} displayEmpty style={{ width: 183, height: 40 }} onChange={handleSelectChange} >

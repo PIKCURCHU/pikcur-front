@@ -13,20 +13,20 @@ interface ImageState {
 
 const GoodsForm: React.FC<{}> = () => {
     const [images, setImages] = useState<ImageState[]>([]);
-    const [selectedType, setSelectedType] = useState('auction'); 
+    // const [selectedType, setSelectedType] = useState('auction'); 
     const [selectedStatus, setSelectedStatus] = useState('new'); 
     const [selectedGender, setSelectedGender] = useState('male'); 
 
-    const handleChangeType = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedType(event.target.value);
-    };
+    // const handleChangeType = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     setSelectedType(event.target.value);
+    // };
     const handleChangeStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedStatus(event.target.value);
     };
     const handleChangeGender = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedGender(event.target.value);
     };
-    const isAuction = selectedType === 'auction';
+    // const isAuction = selectedType === 'auction';
     return (
         <TitleLayout
             title={"상품 등록"}
@@ -37,7 +37,7 @@ const GoodsForm: React.FC<{}> = () => {
                     상품명
                     <CustomInput width={448} height={56} placeholder={"상품명을 입력해주세요."} fontSize={18}/>
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 'normal', color: '#141414', display:'flex', flexDirection:'column', marginTop:'27px', gap:'11px' }}>
+                {/* <div style={{ fontSize: 18, fontWeight: 'normal', color: '#141414', display:'flex', flexDirection:'column', marginTop:'27px', gap:'11px' }}>
                     거래 방식 선택
                     <RadioGroup
                         row
@@ -50,7 +50,7 @@ const GoodsForm: React.FC<{}> = () => {
                         <FormControlLabel value="general" control={<Radio sx={{'&.Mui-checked': {color: 'black', }}}/>} label="일반 거래" />
                         
                     </RadioGroup>                
-                </div>
+                </div> */}
                 <div style={{ fontSize: 18, fontWeight: 'normal', color: '#141414', display:'flex', flexDirection:'column', marginTop:'27px', gap:'11px' }}>
                     카테고리
                     <CustomInput width={448} height={56} placeholder={"문의 제목을 입력해주세요."} fontSize={18}/>
@@ -99,8 +99,8 @@ const GoodsForm: React.FC<{}> = () => {
                     이미지 등록 (최대 10장)
                     <ImageUploadGroup maxCount={10} images={images} setImages={setImages}/>
                 </div>
-                {isAuction && (
-                    <>
+                {/* {isAuction && (
+                    <> */}
                         <div style={{ fontSize: 18, fontWeight: 'normal', color: '#141414', display:'flex', flexDirection:'column', marginTop:'27px', gap:'11px' }}>
                             즉결 가격
                             <CustomInput width={448} height={56} placeholder={"즉결 가격을 입력해주세요."} fontSize={18}/>
@@ -119,8 +119,8 @@ const GoodsForm: React.FC<{}> = () => {
                                 <CustomInput width={448} height={56} placeholder={"문의 제목을 입력해주세요."} fontSize={18}/>
                             </div> 
                         </div>
-                    </>
-                )}
+                    {/* </>
+                )} */}
                 <div style={{ fontSize: 18, fontWeight: 'normal', color: '#141414', display:'flex', flexDirection:'column', marginTop:'27px', gap:'11px' }}>
                     배송비
                     <CustomInput width={448} height={56} placeholder={"배송비를 입력해주세요."} fontSize={18}/>
