@@ -192,7 +192,7 @@ const SearchGoodsList: React.FC<SearchGoodsListProps> = () => {
                                             ))}
                                         </Select>
                                     </div>
-                                    <div>
+                                    {/* <div>
                                         <RadioGroup
                                             defaultValue="normal"
                                             row
@@ -200,7 +200,7 @@ const SearchGoodsList: React.FC<SearchGoodsListProps> = () => {
                                             <FormControlLabel value="normal" control={<Radio />} label="일반 거래" />
                                             <FormControlLabel value="action" control={<Radio />} label="경매 거래" />
                                         </RadioGroup>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div>
                                     <Select value={value} displayEmpty style={{ width: 183, height: 40 }} onChange={handleSelectChange} >
