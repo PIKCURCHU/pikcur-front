@@ -8,7 +8,7 @@ interface CustomInputProps {
     type?: string;
     value?: string;
     disabled?: boolean;
-}
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>)=>void;}
 
 /** 공통 input 컴포넌트
  * 
@@ -20,9 +20,9 @@ interface CustomInputProps {
  * @param disabled
  * @returns 
  */
-const CustomInput: React.FC<CustomInputProps> = ({ width, height, placeholder, fontSize, type, value, disabled }) => {
+const CustomInput: React.FC<CustomInputProps> = ({ width, height, placeholder, fontSize, type, value, disabled, onChange }) => {
     return (
-        <input type={type} placeholder={placeholder} value={value} disabled={disabled} style={{
+        <input type={type} placeholder={placeholder} value={value} disabled={disabled} onChange={onChange} style={{
             width: width,
             height: height,
             border: '1px solid #E0E0E0',

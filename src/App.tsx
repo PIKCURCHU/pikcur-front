@@ -21,6 +21,7 @@ import ProductQuestionDetail from './pages/Store/ProductQuestionDetail';
 import ProductQuestionForm from './pages/Store/ProductQuestionForm';
 import TransactionDetail from './pages/Store/TransactionDetail';
 import GoodsForm from './pages/Goods/GoodsForm';
+import MyPage from './pages/MyPage/MyPage';
 
 function App() {
   return (
@@ -33,8 +34,9 @@ function App() {
       {/* <SignUpSuccess></SignUpSuccess> */}
       {/* <SearchPage></SearchPage> */}
       {/* <MainPage></MainPage> */}
-      <StoreDetail isMyselfView={true}></StoreDetail>
+      {/* <StoreDetail isMyselfView={true}></StoreDetail> */}
       {/* <GoodsForm></GoodsForm> */}
+      <MyPage></MyPage>
     </div>
   );
 }

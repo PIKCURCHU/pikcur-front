@@ -8,7 +8,7 @@ interface CustomTextareaProps {
   fontSize: number;
   value?: string;
   disabled?: boolean;
-}
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>)=>void;}
 
 interface StyledTextareaProps {
   width: number;
@@ -46,9 +46,10 @@ const StyledTextarea = styled.textarea<StyledTextareaProps>`
  * @param disabled
  * @returns 
  */
-const CustomTextarea: React.FC<CustomTextareaProps> = ({ width, height, placeholder, fontSize, value, disabled }) => {
+const CustomTextarea: React.FC<CustomTextareaProps> = ({ width, height, placeholder, fontSize, value, disabled, onChange }) => {
   return (
     <StyledTextarea
+      onChange={onChange}
       width={width}
       height={height}
       placeholder={placeholder}
