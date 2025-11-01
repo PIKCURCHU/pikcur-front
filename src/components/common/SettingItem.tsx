@@ -1,18 +1,24 @@
 import { ListItem, ListItemText, Switch } from "@mui/material";
 import * as React from "react";
 
-type RadiusType = 'top' | 'bottom' | 'middle';
+type RadiusType = 'top' | 'bottom' | 'middle' | 'single';
 
 const borderRadiusMap: Record<RadiusType, string> = {
-    top: '15px 15px 0 0',
-    bottom: '0 0 15px 15px',
-    middle: '0'
+  top: '15px 15px 0 0',
+  bottom: '0 0 15px 15px',
+  middle: '0',
+  single: '15px 15px 15px 15px'
 }
 
 interface SettingElementProps {
-    content: string;
-    element: React.ReactNode; 
-    type: RadiusType; /**15 15 0 0, 0 0 15 15 */
+  content: string | React.ReactNode;
+  element: React.ReactNode;
+  type: RadiusType; /**15 15 0 0, 0 0 15 15 */
+  onClick?: () => void;
+  style?: React.CSSProperties;
+  height?: number | string;
+  elementRight?: boolean;
+  maxWidth?: string | number;
 }
 
 /** 설정 리스트 내부 자식 요소로 들어갈 리스트 아이템 컴포넌트
@@ -66,20 +72,29 @@ const handleToggle = (key: string) => () => {
  * @param type 리스트 요소의 radius 방향
  * @returns 
  */
-const SettingItem: React.FC<SettingElementProps> = ({content, element, type}) => {
-    
-        
-    return (
-        <ListItem sx={{
-            height:"46px",
-            backgroundColor: 'white',
-            border: "1px solid #D9D9D9",
-            borderRadius: borderRadiusMap[type]
-          }}>
-            <ListItemText primary={content} />
-            {element}
-        </ListItem>
-    );
+const SettingItem: React.FC<SettingElementProps> = ({ content, element, type, onClick, height, elementRight = false, style, maxWidth }) => {
+  return (
+    <ListItem sx={{
+      height: height || "46px",
+      backgroundColor: 'white',
+      border: "1px solid #D9D9D9",
+      borderRadius: borderRadiusMap[type],
+      cursor: onClick ? 'pointer' : 'default',
+      ...style
+    }}
+      onClick={onClick}
+    >
+      <ListItemText primary={content} />
+      <div style={{
+        maxWidth: maxWidth || '70%',
+        minWidth: maxWidth || '70%',
+        display: 'flex',
+        justifyContent: elementRight ? 'flex-end' : 'space-between',
+      }}>
+          {element}
+      </div>
+    </ListItem>
+  );
 }
 
 export default SettingItem;
