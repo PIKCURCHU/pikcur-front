@@ -21,12 +21,12 @@ interface SettingListProps {
  */
 const SettingList: React.FC<SettingListProps> =({children}) => {
     return (
-        <Box sx={{ display:"flex", justifyContent: "space-evenly"}}width={695} height={795} bgcolor={"#F2F2F2"}>
-            <List sx={{width: "519px", height:"46px", marginTop:"60px"}} >
+        <Box sx={{ display:"flex", justifyContent: "space-evenly", paddingTop: '160px'}} width={'100%'} height={'calc(100% - 160px)'} bgcolor={"#F2F2F2"}>
+            <List sx={{display: "flex", flexDirection: "column", alignItems: "center", width: '75%' }} >
             {/* 설정 요소 섹션 */}
             
             {children}
-
+            
             </List>
         </Box>
     );
