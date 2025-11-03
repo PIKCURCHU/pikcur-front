@@ -78,7 +78,7 @@ const SignUp: React.FC<SignUpProps> = () => {
                                 height: 56,
                                 borderRadius: 8,
                                 marginLeft: 10
-                            }}>인증번호 확인</Button>
+                            }}>인증하기</Button>
                     </div>
                     <div style={{ display: 'flex' }}>
                         <CustomInput width={326} height={56} placeholder="이름" />
