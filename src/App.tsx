@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Login from './pages/Auth/Login/Login';
@@ -22,8 +22,27 @@ import ProductQuestionForm from './pages/Store/ProductQuestionForm';
 import TransactionDetail from './pages/Store/TransactionDetail';
 import GoodsForm from './pages/Goods/GoodsForm';
 import MyPage from './pages/MyPage/MyPage';
+import GoodsDetail from './pages/Goods/GoodsDetail';
+import Payment from './pages/Payment/Payment';
+import CustomModal, { ManageModalHandle } from './components/common/CustomModal';
+import { Button } from '@mui/material';
 
 function App() {
+
+     const [receiver, setReceiver] = useState('홍길동');
+    const [phone, setPhone] = useState('010-1234-5678');
+    const [address, setAddress] = useState('서울시 강남구 테헤란로 123');
+    const [detailAddress, setDetailAddress] = useState('101동 202호');
+    const modalRef = useRef<ManageModalHandle>(null);
+
+    const handleAddressSearch = () => {
+        alert('api 연동 필요');
+    };
+
+    const handlePay = () => {
+        alert('결제가 완료되었습니다.');
+        modalRef.current?.closeModal();
+    };
   return (
     <div>
       {/* <FindIdSuccess /> */}
@@ -36,7 +55,35 @@ function App() {
       {/* <MainPage></MainPage> */}
       {/* <StoreDetail isMyselfView={true}></StoreDetail> */}
       {/* <GoodsForm></GoodsForm> */}
-      <MyPage></MyPage>
+      {/* <MyPage></MyPage> */}
+      {/* <TransactionDetail isBuyerView={true}></TransactionDetail> */}
+            <Button
+                variant="contained"
+                onClick={() => modalRef.current?.openModal()}
+                style={{ margin: 40, fontWeight: 700, fontSize: 18 }}
+            >
+                결제 화면 열기
+            </Button>
+            <CustomModal
+                ref={modalRef}
+                title="결제"
+                content={
+                    <Payment
+                        receiver={receiver}
+                        setReceiver={setReceiver}
+                        phone={phone}
+                        setPhone={setPhone}
+                        address={address}
+                        setAddress={setAddress}
+                        detailAddress={detailAddress}
+                        setDetailAddress={setDetailAddress}
+                        handleAddressSearch={handleAddressSearch}
+                    />
+                }
+                leftButtonContent="결제하기"
+                onLeftButtonClick={handlePay}
+                height={600}
+            />
     </div>
   );
 }

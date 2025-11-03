@@ -3,17 +3,19 @@ import { Box } from '@mui/system';
 import * as React from 'react';
 
 interface CustomModalProps {
-    title: string;
-    content: React.ReactNode;
-    leftButtonColor?: string;
-    leftButtonContent: string;
-    onLeftButtonClick: ()=> void;
+  title: string;
+  content: React.ReactNode;
+  leftButtonColor?: string;
+  leftButtonContent?: string;
+  onLeftButtonClick?: () => void;
+  height?: number | string;
+  buttons?: React.ReactNode;
 }
 
 export interface ManageModalHandle {
-    openModal: () => void;
-    closeModal: () => void;
-  }
+  openModal: () => void;
+  closeModal: () => void;
+}
 
 /** 사용자 화면 커스텀 모달 컴포넌트
  * @example
@@ -46,16 +48,18 @@ export interface ManageModalHandle {
  * @returns 
  */
 const CustomModal = React.forwardRef<ManageModalHandle, CustomModalProps>(
-    (
-        {
-            title, 
-            content, 
-            leftButtonColor, 
-            leftButtonContent, 
-            onLeftButtonClick
-        }, 
-        ref
-    ) => {
+  (
+    {
+      title,
+      content,
+      leftButtonColor,
+      leftButtonContent,
+      onLeftButtonClick,
+      height,
+      buttons,
+    },
+    ref
+  ) => {
     const [position, setPosition] = React.useState({ x: 0, y: 0 });
     const [open, setOpen] = React.useState(false);
     const offset = React.useRef({ x: 0, y: 0 });
@@ -98,24 +102,24 @@ const CustomModal = React.forwardRef<ManageModalHandle, CustomModalProps>(
     }));
 
     return (
-        <>
-            <Modal open={open} onClose={() => setOpen(false)}>
-                <Box
-                    ref={dragRef}
-                    sx={{
-                    position: 'absolute',
-                    top: position.y,
-                    left: position.x,
-                    width: 607,
-                    bgcolor: 'background.paper',
-                    borderRadius: 2,
-                    boxShadow: 3,
-                    height: 347,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    overflow: 'hidden'
-                    }}
-                >
+      <>
+        <Modal open={open} onClose={() => setOpen(false)}>
+          <Box
+            ref={dragRef}
+            sx={{
+              position: 'absolute',
+              top: position.y,
+              left: position.x,
+              width: 607,
+              bgcolor: 'background.paper',
+              borderRadius: 2,
+              boxShadow: 3,
+              height: height ?? 347,
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden'
+            }}
+          >
             <Typography
               sx={{
                 fontWeight: 'bold',
@@ -133,14 +137,14 @@ const CustomModal = React.forwardRef<ManageModalHandle, CustomModalProps>(
             >
               {title}
             </Typography>
-            <Divider component="li" sx={{height: 0}}/>            
+            <Divider component="li" sx={{ height: 0 }} />
             <Box
               sx={{
-                padding:"20px",
+                padding: "20px",
                 overflowY: 'auto',
                 height: 380,
                 overflow: 'auto',
-                display:"flex",
+                display: "flex",
                 justifyContent: "space-evenly"
               }}
             >
@@ -156,38 +160,45 @@ const CustomModal = React.forwardRef<ManageModalHandle, CustomModalProps>(
               borderRadius: '0px 0px 8px 8px',
               marginBottom: "30px"
             }}>
-              <Button
-                variant="contained"
-                onClick={onLeftButtonClick}
-                sx={{
-                  height: 40,
-                  width: 224,
-                  backgroundColor: leftButtonColor === 'red' ? '#FF5050' : '#141414',
-                  color: '#FFFFFF',
-                  borderRadius: 2,
-                  fontSize: 14
-                }}>
-                {leftButtonContent}
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() => setOpen(false)}
-                sx={{
-                  height: 40,
-                  width: 224,
-                  borderRadius: 2,
-                  fontSize: 14,
-                  color: "black",
-                  border:"none",
-                  backgroundColor:"#F2F2F2"
-                }}>
-                닫기
-              </Button>
+
+              {!buttons && (
+                <>
+                  <Button
+                    variant="contained"
+                    onClick={onLeftButtonClick}
+                    sx={{
+                      height: 40,
+                      width: 224,
+                      backgroundColor: leftButtonColor === 'red' ? '#FF5050' : '#141414',
+                      color: '#FFFFFF',
+                      borderRadius: 2,
+                      fontSize: 14
+                    }}>
+                    {leftButtonContent}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => setOpen(false)}
+                    sx={{
+                      height: 40,
+                      width: 224,
+                      borderRadius: 2,
+                      fontSize: 14,
+                      color: "black",
+                      border: "none",
+                      backgroundColor: "#F2F2F2"
+                    }}>
+                    닫기
+                  </Button>
+                </>
+              )
+              }
+              {buttons}
             </div>
           </Box>
         </Modal>
-        </>
+      </>
     );
-    }
-);            
+  }
+);
 export default CustomModal;

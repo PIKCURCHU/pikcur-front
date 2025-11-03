@@ -2,8 +2,8 @@ import styled from '@emotion/styled'
 import * as React from 'react';
 
 interface CustomTextareaProps {
-  width: number;
-  height: number;
+  width: number | string;
+  height: number | string;
   placeholder: string; 
   fontSize: number;
   value?: string;
@@ -11,15 +11,15 @@ interface CustomTextareaProps {
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>)=>void;}
 
 interface StyledTextareaProps {
-  width: number;
-  height: number;
+  width: number | string;
+  height: number | string;
   fontSize: number;
   disabled?: boolean;
 }
 
 const StyledTextarea = styled.textarea<StyledTextareaProps>`
-  width: ${(props) => props.width}px;   
-  height: ${(props) => props.height}px; 
+  width: ${(props) => typeof props.width === 'number' ? `${props.width}px` : props.width};
+  height: ${(props) => typeof props.height === 'number' ? `${props.height}px` : props.height};
   padding: 16px;
   border: 1px solid #E0E0E0;
   border-radius: 8px;
