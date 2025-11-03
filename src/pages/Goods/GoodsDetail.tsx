@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import BaseLayout from '../../components/layout/BaseLayout';
 import GoodsGallery from './Component/GoodsGallery';
 import { faHeart } from '@fortawesome/free-regular-svg-icons';
@@ -15,6 +15,8 @@ import {
   faShieldHalved,
   faBan
 } from '@fortawesome/free-solid-svg-icons';
+import { ManageModalHandle } from '../Auth/SignUp/component/TermsOfServiceModal';
+import Payment from '../Payment/Payment';
 
 
 /**
@@ -22,8 +24,23 @@ import {
  * 상품 상세 페이지
  */
 const GoodsDetail: React.FC = () => {
-    const payModalRef = useRef<any>(null);
     const reportModalRef = useRef<any>(null);
+
+    // 즉시결제 모달 정보
+    const [receiver, setReceiver] = useState('홍길동');
+    const [phone, setPhone] = useState('010-1234-5678');
+    const [address, setAddress] = useState('서울시 강남구 테헤란로 123');
+    const [detailAddress, setDetailAddress] = useState('101동 202호');
+    const payModalRef = useRef<ManageModalHandle>(null);
+
+    const handleAddressSearch = () => {
+        alert('api 연동 필요');
+    };
+
+    const handlePay = () => {
+        alert('결제가 완료되었습니다.');
+        payModalRef.current?.closeModal();
+    };
 
     return (
         <>
@@ -178,7 +195,7 @@ const GoodsDetail: React.FC = () => {
                             </div>
                         </div>
 
-                        <CustomModal
+                        {/* <CustomModal
                             ref={payModalRef}
                             title="즉결 신청"
                             content={
@@ -193,6 +210,26 @@ const GoodsDetail: React.FC = () => {
                                 alert('결제 처리 로직 실행');
                                 payModalRef.current?.closeModal();
                             }}
+                        /> */}
+                        <CustomModal
+                            ref={payModalRef}
+                            title="결제"
+                            content={
+                                <Payment
+                                    receiver={receiver}
+                                    setReceiver={setReceiver}
+                                    phone={phone}
+                                    setPhone={setPhone}
+                                    address={address}
+                                    setAddress={setAddress}
+                                    detailAddress={detailAddress}
+                                    setDetailAddress={setDetailAddress}
+                                    handleAddressSearch={handleAddressSearch}
+                                />
+                            }
+                            leftButtonContent="결제하기"
+                            onLeftButtonClick={handlePay}
+                            height={600}
                         />
                         <CustomModal
                             ref={reportModalRef}
