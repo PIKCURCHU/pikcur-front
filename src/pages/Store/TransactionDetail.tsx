@@ -1,9 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import TitleLayout from '../../components/layout/TitleLayout';
 import InfoList from '../../components/common/InfoList';
-import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Rating, Select, SelectChangeEvent, Typography } from '@mui/material';
 import CustomModal from '../../components/common/CustomModal';
 import CustomInput from '../../components/common/CustomInput';
+import { common } from '@mui/material/colors';
+import CustomTextarea from '../../components/common/CustomTextarea';
 
 // ------------------------------------
 // 인터페이스 정의 (이전 코드와 동일)
@@ -41,7 +43,7 @@ const TransactionDetailExample: TransactionDetails = {
     product: {
         productName: '빈티지 가죽 자켓 (A급)',
         productImageUrl: 'https://picsum.photos/240/157',
-        transactionStatus: '배송중', 
+        transactionStatus: '배송중',
     },
     seller: {
         name: '프리미엄 빈티지 샵',
@@ -50,7 +52,7 @@ const TransactionDetailExample: TransactionDetails = {
     buyer: {
         name: '김구매 (buyerName)',
         phone: '010-1234-5678',
-    }, 
+    },
     shippingCompany: 'CJ대한통운',
     trackingNumber: '2342-3546-3463-46',
     address: '서울특별시 강남구 테헤란로 123',
@@ -64,10 +66,21 @@ const formatPrice = (price: number): string => {
     return price.toLocaleString('ko-KR') + '원';
 };
 
+const tempReviewComments = [
+    { id: 1, comment: '배송이 빨라요' },
+    { id: 2, comment: '친절해요' },
+    { id: 3, comment: '상품이 깨끗해요' },
+    { id: 4, comment: '포장이 꼼꼼해요' },
+    { id: 5, comment: '배송이 빨라요' },
+]
+
 const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = true }) => {
     const shippingModalRef = useRef<any>(null);
+    const reviewModalRef = useRef<any>(null);
     const [shippingCompany, setShippingCompany] = React.useState(TransactionDetailExample.shippingCompany);
     const [trackingNumber, setTrackingNumber] = React.useState(TransactionDetailExample.trackingNumber);
+    const [selectedComments, setSelectedComments] = useState<number[]>([]);
+
 
     const handleChange = (event: SelectChangeEvent) => {
         setShippingCompany(event.target.value as string);
@@ -75,7 +88,7 @@ const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = t
 
     const data = TransactionDetailExample;
     const isShippingRegistered = !!data.trackingNumber;
-    
+
     // 구매 확정 버튼 로직
     const handleConfirmPurchase = () => {
         if (data.product.transactionStatus !== '배송중') {
@@ -86,19 +99,21 @@ const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = t
         if (confirmResult) {
             alert('구매 확정 처리 완료!');
             // TODO: '거래 완료' 상태로 업데이트하는 API 호출 로직
+
+            reviewModalRef.current?.openModal();
         }
     };
-    
+
     // 왼쪽 버튼의 내용을 조건부로 설정
     const LeftButton = () => {
         if (isBuyerView) {
             // 구매자 뷰: '구매 확정' 버튼
             return (
-                <Button 
+                <Button
                     style={{
-                        width:'50%', height:'40px', borderRadius:'8px', 
+                        width: '50%', height: '40px', borderRadius: '8px',
                         backgroundColor: '#F2F2F2',
-                        border:'1px solid #D9D9D9', color:'#000000', fontSize:'16px'
+                        border: '1px solid #D9D9D9', color: '#000000', fontSize: '16px'
                     }}
                     onClick={handleConfirmPurchase}
                     // '배송중' 상태일 때만 활성화 (임시 조건)
@@ -110,11 +125,11 @@ const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = t
         } else {
             // 판매자 뷰: '운송장 등록' 버튼 (기존 로직)
             return (
-                <Button 
+                <Button
                     style={{
-                        width:'50%', height:'40px', borderRadius:'8px', 
+                        width: '50%', height: '40px', borderRadius: '8px',
                         backgroundColor: '#F2F2F2',
-                        border:'1px solid #D9D9D9', color:'#000000', fontSize:'16px'
+                        border: '1px solid #D9D9D9', color: '#000000', fontSize: '16px'
                     }}
                     onClick={() => shippingModalRef.current?.openModal()}
                 >
@@ -124,48 +139,56 @@ const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = t
         }
     };
 
-    return(
+    const handleCommentClick = (id: number) => {
+        setSelectedComments(prev =>
+            prev.includes(id)
+                ? prev.filter(cid => cid !== id)
+                : [...prev, id]
+        );
+    };
+
+    return (
         <TitleLayout
             title={isBuyerView ? '구매 상세' : '거래 상세'}
             content={
                 <div>
                     <div>
                         <div style={{
-                            display:'flex',
-                            alignItems:'center'
+                            display: 'flex',
+                            alignItems: 'center'
                         }}>
-                            <img 
-                                src={data.product.productImageUrl} 
+                            <img
+                                src={data.product.productImageUrl}
                                 alt={data.product.productName}
-                                style={{width:'240px', height:'157px', borderRadius:'12px'}} 
+                                style={{ width: '240px', height: '157px', borderRadius: '12px' }}
                             />
                             <div style={{
-                                marginLeft:'20px',
-                                marginRight:'auto'
+                                marginLeft: '20px',
+                                marginRight: 'auto'
                             }}>
                                 <Typography fontSize={22} fontWeight={'bold'}>{data.product.productName}</Typography>
                             </div>
-                            <Typography 
-                                fontSize={22} 
-                                fontWeight={'bold'} 
+                            <Typography
+                                fontSize={22}
+                                fontWeight={'bold'}
                                 color={data.product.transactionStatus === '배송중' ? 'red' : 'gray'}
                             >
                                 {data.product.transactionStatus}
                             </Typography>
                         </div>
-                        
+
                         <div style={{
-                            display:'flex',
-                            gap:'10px',
-                            marginTop:'20px'
+                            display: 'flex',
+                            gap: '10px',
+                            marginTop: '20px'
                         }}>
                             {/* 💡 왼쪽 버튼: 뷰 타입에 따라 렌더링 */}
-                            <LeftButton /> 
-                            
-                            <Button 
+                            <LeftButton />
+
+                            <Button
                                 style={{
-                                    width:'50%', height:'40px', borderRadius:'8px', 
-                                    backgroundColor:'#F2F2F2', border:'1px solid #D9D9D9', color:'#000000', fontSize:'16px'
+                                    width: '50%', height: '40px', borderRadius: '8px',
+                                    backgroundColor: '#F2F2F2', border: '1px solid #D9D9D9', color: '#000000', fontSize: '16px'
                                 }}
                                 disabled={!isShippingRegistered}
                                 onClick={() => {
@@ -176,48 +199,48 @@ const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = t
                             </Button>
                         </div>
                     </div>
-                    
+
                     {/* 판매자 정보 */}
                     <div style={{
-                        display:'flex', gap:'20px', flexDirection:'column',
-                        marginBottom:'20px', marginTop:'20px'
+                        display: 'flex', gap: '20px', flexDirection: 'column',
+                        marginBottom: '20px', marginTop: '20px'
                     }}>
                         <Typography fontSize={22} fontWeight={'bold'}>판매자 정보</Typography>
                         <InfoList
                             data={{
-                                sellerName: data.seller.name, 
+                                sellerName: data.seller.name,
                                 phone: data.seller.phone
                             }}
                             labelMap={{ sellerName: '상점 이름', phone: '연락처' }}
                         />
                     </div>
-                    
+
                     {/* 배송 정보 */}
                     <div style={{
-                        display:'flex', gap:'20px', flexDirection:'column',
-                        marginBottom:'20px'
+                        display: 'flex', gap: '20px', flexDirection: 'column',
+                        marginBottom: '20px'
                     }}>
-                        <Typography fontSize={22} fontWeight={'bold'}>배송 정보</Typography> 
+                        <Typography fontSize={22} fontWeight={'bold'}>배송 정보</Typography>
                         <InfoList
                             data={{
                                 buyerName: data.buyer.name,
                                 phone: data.buyer.phone
                             }}
-                            labelMap={{ buyerName: '수신인', phone: '연락처'}}
+                            labelMap={{ buyerName: '수신인', phone: '연락처' }}
                         />
                         <InfoList
                             data={{
                                 address: data.address,
                                 shipping: isShippingRegistered ? `${data.shippingCompany} ${data.trackingNumber}` : '미등록'
                             }}
-                            labelMap={{ address:'주소', shipping:'운송장 번호' }}
+                            labelMap={{ address: '주소', shipping: '운송장 번호' }}
                         />
                     </div>
-                    
+
                     {/* 결제 정보 */}
                     <div style={{
-                        display:'flex', gap:'20px', flexDirection:'column',
-                        marginBottom:'20px'
+                        display: 'flex', gap: '20px', flexDirection: 'column',
+                        marginBottom: '20px'
                     }}>
                         <Typography fontSize={22} fontWeight={'bold'}>결제 정보</Typography>
                         <InfoList
@@ -225,17 +248,17 @@ const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = t
                                 winBidPrice: formatPrice(data.winBidPrice),
                                 shippingPrice: formatPrice(data.shippingPrice)
                             }}
-                            labelMap={{ winBidPrice:'낙찰 가격', shippingPrice:'배송비' }}
+                            labelMap={{ winBidPrice: '낙찰 가격', shippingPrice: '배송비' }}
                         />
                         <InfoList
                             data={{
                                 paymentMethod: data.paymentMethod,
                                 paymentPrice: formatPrice(data.totalPaymentPrice)
                             }}
-                            labelMap={{ paymentMethod:'결제 수단', paymentPrice:'결제 금액' }}
+                            labelMap={{ paymentMethod: '결제 수단', paymentPrice: '결제 금액' }}
                         />
                     </div>
-                    
+
                     {/* 운송장 등록 모달 (판매자 뷰에서만 사용되지만, 모달 자체는 렌더링 유지) */}
                     <CustomModal
                         ref={shippingModalRef}
@@ -256,10 +279,10 @@ const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = t
                                         <MenuItem value={'CU편의점택배'}>CU편의점택배</MenuItem>
                                     </Select>
                                 </FormControl>
-                                <CustomInput 
-                                    width={'400px'} 
-                                    height={40} 
-                                    placeholder='운송장 번호' 
+                                <CustomInput
+                                    width={'400px'}
+                                    height={40}
+                                    placeholder='운송장 번호'
                                     value={trackingNumber}
                                 />
                             </div>
@@ -275,6 +298,66 @@ const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = t
                             // TODO: 상태 업데이트 로직 추가
                             shippingModalRef.current?.closeModal();
                         }}
+                    />
+
+                    <CustomModal
+                        ref={reviewModalRef}
+                        title="상품 리뷰"
+                        height={565}
+                        content={
+                            <div style={{ display: 'flex', gap: 10, width: '100%', alignItems: 'center', flexDirection: 'column' }}>
+                                <div style={{ color: '#141414', fontWeight: 'bold', fontSize: 16 }}>구매하신 상품의 리뷰를 남겨주세요.</div>
+                                <div>
+                                    <Rating name="simple-controlled" size={"large"} />
+                                </div>
+                                <div style={{ width: '100%' }}>
+                                    <CustomTextarea
+                                        placeholder="(선택)리뷰를 입력해주세요."
+                                        height={107}
+                                        width={'94%'}
+                                        fontSize={16}
+                                    />
+                                </div>
+                                <div style={{ width: '100%', display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
+                                    {tempReviewComments.map(item => (
+                                        <Button
+                                            key={item.id}
+                                            onClick={() => handleCommentClick(item.id)}
+                                            style={{
+                                                borderRadius: 8,
+                                                fontSize: 13,
+                                                padding: '6px 16px',
+                                                backgroundColor: selectedComments.includes(item.id) ? '#c2c2c2ff' : '#F2F2F2',
+                                                color: '#141414',
+                                                fontWeight: 500,
+                                                transition: 'all 0.2s'
+                                            }}
+                                        >
+                                            {item.comment}
+                                        </Button>
+                                    ))}
+                                </div>
+                                <div></div>
+                            </div>
+                        }
+                        buttons={
+                            <Button
+                                variant="contained"
+                                onClick={() => {
+                                    alert('리뷰가 등록되었습니다.');
+                                    reviewModalRef.current?.closeModal();
+                                }}
+                                sx={{
+                                    height: 40,
+                                    width: '94%',
+                                    backgroundColor: '#141414',
+                                    color: '#FFFFFF',
+                                    borderRadius: 2,
+                                    fontSize: 14
+                                }}>
+                                리뷰 등록
+                            </Button>
+                        }
                     />
                 </div>
             }
