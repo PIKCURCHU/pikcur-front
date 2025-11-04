@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use } from 'react';
 import logo from '../../assets/images/PikcurLogo.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-regular-svg-icons'; // ← 테두리만 있는 알람 아이콘
@@ -6,6 +6,7 @@ import SearchInput from './SearchInput';
 import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import CustomAvatar from './CustomAvatar';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
     isBasic?: boolean;
@@ -115,6 +116,8 @@ const Header: React.FC<HeaderProps> = ({ isBasic = true, isAuth, onSubmit }) => 
     const [isFAQHovered, setIsFAQHovered] = React.useState<boolean>(false);
     const [isQnaHovered, setIsQnaHovered] = React.useState<boolean>(false);
 
+    const navigate = useNavigate();
+
     const [open, setOpen] = React.useState(false);
 
     const toggleDrawer = (newOpen: boolean) => () => {
@@ -122,47 +125,47 @@ const Header: React.FC<HeaderProps> = ({ isBasic = true, isAuth, onSubmit }) => 
     };
 
     const DrawerList = (
-    <Box sx={{ width: 366 }} role="presentation">
-        <div style={{
-            display:'flex',
-            gap:'10px',
-            marginTop:'20px',
-            marginLeft:'20px',
-            alignItems:'center'
-        }}>
-            <FontAwesomeIcon icon={faXmark} onClick={toggleDrawer(false)} style={{cursor:'pointer'}}/>
-            <Typography fontSize={22} fontWeight={'bold'}>알림</Typography>
-        </div>
-        <Divider sx={{marginTop:'20px'}}/>
-        <div>
-        {alarmList.map((alarm, index)=>{
-            return (
-                <div 
-                key={index}
-                style={{
-                    display: 'flex',
-                    width:"100%",
-                    height:'90px',
-                    alignItems: 'center',
-                }}>
-                    <div style={{marginLeft:"10px", marginRight: '10px'}}>
-                        <CustomAvatar size={60}/>
-                    </div>
-                    
-                    <div style={{ marginRight: 'auto' }}>
-                        <Typography fontSize={15} fontWeight={'bold'}>{alarm.title}</Typography>
-                        <Typography fontSize={13}>{alarm.content}</Typography>
-                    </div>
-                    <div style={{ marginRight: '10px' }}>
-                        <Typography fontSize={13}>{timeAgo(alarm.createdDate)}</Typography>
-                    </div>
-                </div>
-            );
-            })}
-            
-        </div>
-    </Box>
-  );
+        <Box sx={{ width: 366 }} role="presentation">
+            <div style={{
+                display: 'flex',
+                gap: '10px',
+                marginTop: '20px',
+                marginLeft: '20px',
+                alignItems: 'center'
+            }}>
+                <FontAwesomeIcon icon={faXmark} onClick={toggleDrawer(false)} style={{ cursor: 'pointer' }} />
+                <Typography fontSize={22} fontWeight={'bold'}>알림</Typography>
+            </div>
+            <Divider sx={{ marginTop: '20px' }} />
+            <div>
+                {alarmList.map((alarm, index) => {
+                    return (
+                        <div
+                            key={index}
+                            style={{
+                                display: 'flex',
+                                width: "100%",
+                                height: '90px',
+                                alignItems: 'center',
+                            }}>
+                            <div style={{ marginLeft: "10px", marginRight: '10px' }}>
+                                <CustomAvatar size={60} />
+                            </div>
+
+                            <div style={{ marginRight: 'auto' }}>
+                                <Typography fontSize={15} fontWeight={'bold'}>{alarm.title}</Typography>
+                                <Typography fontSize={13}>{alarm.content}</Typography>
+                            </div>
+                            <div style={{ marginRight: '10px' }}>
+                                <Typography fontSize={13}>{timeAgo(alarm.createdDate)}</Typography>
+                            </div>
+                        </div>
+                    );
+                })}
+
+            </div>
+        </Box>
+    );
 
     return (
         <div style={{ height: '105px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #F2F2F2' }}>
@@ -172,90 +175,98 @@ const Header: React.FC<HeaderProps> = ({ isBasic = true, isAuth, onSubmit }) => 
 
             {isBasic && (
                 <>
-                    <div style={{display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%', width: '336px' }}>
-                        <div style={{ 
+                    <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%', width: '336px' }}>
+                        <div style={{
                             fontSize: 22,
-                            position:'relative',
-                            cursor:'pointer',
-                            height:"100%",
-                            width:"100%",
-                            display:'flex',
-                            alignItems:"center",
+                            position: 'relative',
+                            cursor: 'pointer',
+                            height: "100%",
+                            width: "100%",
+                            display: 'flex',
+                            alignItems: "center",
                             justifyContent: 'center',
                             fontWeight: isHomeHovered ? 'bold' : 'normal'
-                            }}
-                            onMouseEnter={()=>setIsHomeHovered(true)}
-                            onMouseLeave={()=>setIsHomeHovered(false)}
-                            >Home</div>
-                        <div style={{ 
+                        }}
+                            onMouseEnter={() => setIsHomeHovered(true)}
+                            onMouseLeave={() => setIsHomeHovered(false)}
+                            onClick={() => navigate('/')}
+                        >Home</div>
+                        <div style={{
                             fontSize: 22,
-                            position:'relative',
-                            cursor:'pointer',
-                            height:"100%",
-                            width:"100%",
-                            display:'flex',
-                            alignItems:"center",
+                            position: 'relative',
+                            cursor: 'pointer',
+                            height: "100%",
+                            width: "100%",
+                            display: 'flex',
+                            alignItems: "center",
                             justifyContent: 'center',
                             fontWeight: isContactHovered ? 'bold' : 'normal'
-                            }}
-                            onMouseEnter={()=>setIsContactHovered(true)}
-                            onMouseLeave={()=>setIsContactHovered(false)}>
-                                Contact Us
+                        }}
+                            onMouseEnter={() => setIsContactHovered(true)}
+                            onMouseLeave={() => setIsContactHovered(false)}>
+                            Contact Us
                             {/* contact 드롭다운 */}
                             {isContactHovered && (
                                 <div style={{
                                     width: '100%',
-                                    position:'absolute',
-                                    top:'100%',
+                                    position: 'absolute',
+                                    top: '100%',
                                     zIndex: '1300',
                                     backgroundColor: 'white',
-                                    border: '1px solid #E0E0E0'}}>
-                                        <div style={{
-                                            display:'flex',
-                                            justifyContent: 'flex-start',
-                                            paddingLeft:'30px',
-                                            alignItems: 'center',
-                                            height:'80px',
-                                            fontWeight: isFAQHovered ? 'bold' : 'normal'
-                                        }}
-                                        onMouseEnter={()=>setIsFAQHovered(true)}
-                                        onMouseLeave={()=>setIsFAQHovered(false)}
-                                        onClick={()=>{}}
-                                        >FAQ</div>
-                                        <div style={{
-                                            display:'flex',
-                                            justifyContent: 'flex-start',
-                                            paddingLeft:'30px',
-                                            alignItems: 'center',
-                                            height:'80px',
-                                            fontWeight: isQnaHovered ? 'bold' : 'normal'
-                                        }}
-                                        onMouseEnter={()=>setIsQnaHovered(true)}
-                                        onMouseLeave={()=>setIsQnaHovered(false)}
-                                        onClick={()=>{}}
-                                        >1:1 문의</div>
+                                    border: '1px solid #E0E0E0'
+                                }}>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'flex-start',
+                                        paddingLeft: '30px',
+                                        alignItems: 'center',
+                                        height: '80px',
+                                        fontWeight: isFAQHovered ? 'bold' : 'normal'
+                                    }}
+                                        onMouseEnter={() => setIsFAQHovered(true)}
+                                        onMouseLeave={() => setIsFAQHovered(false)}
+                                        onClick={() => navigate('/faq')}
+                                    >FAQ</div>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'flex-start',
+                                        paddingLeft: '30px',
+                                        alignItems: 'center',
+                                        height: '80px',
+                                        fontWeight: isQnaHovered ? 'bold' : 'normal'
+                                    }}
+                                        onMouseEnter={() => setIsQnaHovered(true)}
+                                        onMouseLeave={() => setIsQnaHovered(false)}
+                                        onClick={() => { navigate('/questionList'); }}
+                                    >1:1 문의</div>
                                 </div>
                             )}
                         </div>
-                        
+
                     </div>
 
-                    
+
 
                     <div style={{ flex: 1 }} />
 
                     <div style={{ marginRight: '42px' }}>
-                        <SearchInput width={200} height={40} placeholder='Search' onSubmit={onSubmit || (() => {})} />
+                        <SearchInput width={200} height={40} placeholder='Search' onSubmit={onSubmit || (() => { })} />
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%', width: '336px', paddingRight: '20px' }}>
-                        <div style={{ borderRight: '2px solid #141414', flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 14, fontWeight: 'bold' }}>상품등록</div>
-                        <div style={{ borderRight: '2px solid #141414', flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 14, fontWeight: 'bold' }}>내 상점</div>
+                        <div style={{ borderRight: '2px solid #141414', flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 14, fontWeight: 'bold' }}>
+                            <span style={{ cursor: 'pointer' }} onClick={() => navigate(isAuth ? '/goodsform' : '/login')}>상품등록</span>
+                        </div>
+                        <div style={{ borderRight: '2px solid #141414', flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 14, fontWeight: 'bold' }}>
+                            <span style={{ cursor: 'pointer' }} onClick={() => navigate(isAuth ? '/storeDetail' : '/login')}>내 상점</span>
+                        </div>
                         <div style={{ borderRight: '2px solid #141414', flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 18, color: '#141414' }}>
-                            <FontAwesomeIcon icon={faBell} onClick={toggleDrawer(true)} />
+                            <FontAwesomeIcon icon={faBell} style={{ cursor: 'pointer' }} onClick={toggleDrawer(true)} />
                         </div>
                         <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 14, fontWeight: 'bold' }}>
-                            {isAuth ? '로그아웃' : '로그인'}
+                            <span style={{ cursor: 'pointer' }} onClick={() => navigate(isAuth ? '/logout' : '/login')}>
+                                {isAuth ? '로그아웃' : '로그인'}
+                            </span>
                         </div>
                     </div>
                     <Drawer open={open} onClose={toggleDrawer(false)} anchor={"right"}>
