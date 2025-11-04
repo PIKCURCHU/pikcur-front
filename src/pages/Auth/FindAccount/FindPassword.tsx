@@ -13,9 +13,8 @@ const FindPassword: React.FC<FindPasswordProps> = () => {
             title="비밀번호 찾기"
             content={
                 <div style={{ height: '346px', display: 'flex', flexDirection: 'column', gap: '30px', alignItems: 'center' }}>
-                    <CustomInput width={448} height={56} placeholder="Email" />
                     <div>
-                        <CustomInput width={326} height={56} placeholder="인증 번호 입력" />
+                        <CustomInput width={326} height={56} placeholder="이메일" />
                         <Button
                             onClick={() => { }}
                             style={{
@@ -28,6 +27,20 @@ const FindPassword: React.FC<FindPasswordProps> = () => {
                                 marginLeft: 10
                             }}>인증번호 발송</Button>
                     </div>
+                    <div>
+                        <CustomInput width={326} height={56} placeholder="인증 번호 입력" />
+                        <Button
+                            onClick={() => { }}
+                            style={{
+                                backgroundColor: "#D9D9D9",
+                                color: "#686868",
+                                fontSize: 16,
+                                width: 112,
+                                height: 56,
+                                borderRadius: 8,
+                                marginLeft: 10
+                            }}>인증하기</Button>
+                    </div>
                     <Button
                         type="button"
                         onClick={() => { }}
@@ -38,7 +51,7 @@ const FindPassword: React.FC<FindPasswordProps> = () => {
                             height: 56,
                             fontSize: 16,
                             borderRadius: 8,
-                        }}>인증하기
+                        }}>다음
                     </Button>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', width: 241 }}>
