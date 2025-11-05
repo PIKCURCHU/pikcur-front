@@ -3,11 +3,11 @@ import AuthLayout from '../../../components/layout/AuthLayout';
 import CustomInput from '../../../components/common/CustomInput';
 import { Button } from '@mui/material';
 
-interface LoginProps {
+interface SignInProps {
     test?: string;
 }
 
-const Login: React.FC<LoginProps> = () => {
+const SignIn: React.FC<SignInProps> = () => {
     return (
         <AuthLayout
             title="WelCome Back!"
@@ -40,4 +40,4 @@ const Login: React.FC<LoginProps> = () => {
     )
 }
 
-export default Login;
+export default SignIn;
