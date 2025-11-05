@@ -4,7 +4,7 @@ import MainPage from './pages/Main/MainPage';
 import FAQ from './pages/Contact/FAQ/FAQ';
 import QuestionList from './pages/Contact/1by1QnA/QuestionList';
 import GoodsForm from './pages/Goods/GoodsForm';
-import Login from './pages/Auth/Login/Login';
+import SignIn from './pages/Auth/SignIn/SignIn';
 import StoreDetail from './pages/Store/StoreDetail';
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
                     <Route path="faq" element={<FAQ />} />
                     <Route path="questionList" element={<QuestionList />} />
                     <Route path="goodsForm" element={<GoodsForm />} />
-                    <Route path="login" element={<Login />} />
+                    <Route path="login" element={<SignIn />} />
                     <Route path="storeDetail" element={<StoreDetail isMyselfView={true} />} />
                 </Routes>
             </BrowserRouter>
