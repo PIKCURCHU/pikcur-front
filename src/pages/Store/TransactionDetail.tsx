@@ -6,6 +6,7 @@ import CustomModal from '../../components/common/CustomModal';
 import CustomInput from '../../components/common/CustomInput';
 import { common } from '@mui/material/colors';
 import CustomTextarea from '../../components/common/CustomTextarea';
+import axios from 'axios';
 
 // ------------------------------------
 // 인터페이스 정의 (이전 코드와 동일)
@@ -53,7 +54,7 @@ const TransactionDetailExample: TransactionDetails = {
         name: '김구매 (buyerName)',
         phone: '010-1234-5678',
     },
-    shippingCompany: 'CJ대한통운',
+    shippingCompany: '04',
     trackingNumber: '2342-3546-3463-46',
     address: '서울특별시 강남구 테헤란로 123',
     winBidPrice: 250000,
@@ -80,6 +81,13 @@ const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = t
     const [shippingCompany, setShippingCompany] = React.useState(TransactionDetailExample.shippingCompany);
     const [trackingNumber, setTrackingNumber] = React.useState(TransactionDetailExample.trackingNumber);
     const [selectedComments, setSelectedComments] = useState<number[]>([]);
+
+    const handleClick = () => {
+        window.open(
+          `http://localhost:8080/transactions/1/shipping?invoice=${trackingNumber}&code=${shippingCompany}`,
+          "_blank"
+        );
+      };
 
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -191,9 +199,7 @@ const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = t
                                     backgroundColor: '#F2F2F2', border: '1px solid #D9D9D9', color: '#000000', fontSize: '16px'
                                 }}
                                 disabled={!isShippingRegistered}
-                                onClick={() => {
-                                    alert(`'${data.shippingCompany}'로 배송 조회 (${data.trackingNumber})`);
-                                }}
+                                onClick={handleClick}
                             >
                                 배송 조회
                             </Button>
@@ -274,9 +280,9 @@ const TransactionDetail: React.FC<{ isBuyerView: boolean }> = ({ isBuyerView = t
                                         onChange={handleChange}
                                         label="택배사"
                                     >
-                                        <MenuItem value={'CJ대한통운'}>CJ대한통운</MenuItem>
-                                        <MenuItem value={'우체국'}>우체국</MenuItem>
-                                        <MenuItem value={'CU편의점택배'}>CU편의점택배</MenuItem>
+                                        <MenuItem value={'04'}>CJ대한통운</MenuItem>
+                                        <MenuItem value={'01'}>우체국</MenuItem>
+                                        <MenuItem value={'46'}>CU편의점택배</MenuItem>
                                     </Select>
                                 </FormControl>
                                 <CustomInput
