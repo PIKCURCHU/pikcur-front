@@ -15,6 +15,7 @@ import {
     Autocomplete 
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
+import axios from 'axios';
 
 interface ImageState {
     file: File;
@@ -53,7 +54,7 @@ const sizeData: { [key: string]: string[] } = {
 const GoodsForm: React.FC<{}> = () => {
     const [images, setImages] = useState<ImageState[]>([]);
     const [selectedStatus, setSelectedStatus] = useState('new'); 
-    const [selectedGender, setSelectedGender] = useState('male'); 
+    const [selectedGender, setSelectedGender] = useState('M'); 
     const [selectedMainCategory, setSelectedMainCategory] = useState('');
     const [selectedSubCategory, setSelectedSubCategory] = useState('');
     const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
@@ -63,8 +64,8 @@ const GoodsForm: React.FC<{}> = () => {
     const [shippingFee, setShippingFee] = useState('');
 
     // --- (1. state 추가) ---
-    const [productName, setProductName] = useState('');
-    const [description, setDescription] = useState('');
+    const [goodsName, setGoodsName] = useState('');
+    const [goodsInfo, setGoodsInfo] = useState('');
     const [auctionEndDate, setAuctionEndDate] = useState('');
     // -----------------------
 
@@ -113,8 +114,8 @@ const GoodsForm: React.FC<{}> = () => {
                         height={56} 
                         placeholder={"상품명을 입력해주세요."} 
                         fontSize={18}
-                        value={productName}
-                        onChange={(e) => setProductName(e.target.value)}
+                        value={goodsName}
+                        onChange={(e) => setGoodsName(e.target.value)}
                     />
                 </div>
                 
@@ -197,8 +198,8 @@ const GoodsForm: React.FC<{}> = () => {
                         value={selectedGender}
                         onChange={handleChangeGender}
                     >
-                        <FormControlLabel value="male" control={<Radio sx={{'&.Mui-checked': {color: 'black', }}}/>} label="남성" />
-                        <FormControlLabel value="female" control={<Radio sx={{'&.Mui-checked': {color: 'black', }}}/>} label="여성" />
+                        <FormControlLabel value="M" control={<Radio sx={{'&.Mui-checked': {color: 'black', }}}/>} label="남성" />
+                        <FormControlLabel value="F" control={<Radio sx={{'&.Mui-checked': {color: 'black', }}}/>} label="여성" />
                     </RadioGroup>
                 </div>
                 
@@ -231,8 +232,8 @@ const GoodsForm: React.FC<{}> = () => {
                         height={240} 
                         placeholder={"상품 설명을 입력해주세요."} 
                         fontSize={18}
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        value={goodsInfo}
+                        onChange={(e) => setGoodsInfo(e.target.value)}
                     />
                 </div>
                 <div style={{ fontSize: 18, fontWeight: 'normal', color: '#141414', display:'flex', flexDirection:'column', marginTop:'27px', gap:'11px' }}>
@@ -295,21 +296,44 @@ const GoodsForm: React.FC<{}> = () => {
             leftButtonName={"등록하기"}
             rightButtonName={"취소"}
             leftButtonClickHandler={()=>{
-                const formData = {
-                    status: selectedStatus,
+                const formData = new FormData();
+                const goodsData = {
+                    goodsName:goodsName,
+                    goodsInfo:goodsInfo,
+                    quality: selectedStatus,
                     gender: selectedGender,
-                    mainCategory: selectedMainCategory,
-                    subCategory: selectedSubCategory,
-                    brand: selectedBrand,
-                    sizes: selectedSizes,
-                    buyOutPrice: buyOutPrice, 
+                    categoryId: 1,
+                    // mainCategory: selectedMainCategory,
+                    // subCategory: selectedSubCategory,
+                    // brand: selectedBrand,
+                    brandId: 1,
+                    size: selectedSizes.join(","),
+                    buyoutPrice: buyOutPrice, 
                     startPrice: startPrice,   
-                    shippingFee: shippingFee,
-                    productName: productName,
-                    description: description,
+                    shippingPrice: shippingFee,
                     auctionEndDate: auctionEndDate
                 };
-                console.log("제출 데이터:", formData);
+                formData.append(
+                    "goodsData",
+                    new Blob([JSON.stringify(goodsData)], { type: "application/json" })
+                );
+            
+                // ② 이미지 파일들 추가
+                images.forEach((img, index) => {
+                    formData.append("images", img.file);
+                });
+            
+                const accessToken = localStorage.getItem("accessToken");
+                axios.post("http://localhost:8080/goods", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer`,
+                    },
+                });
+                // console.log("===== FormData 내용 확인 =====");
+                // formData.forEach((value, key) => {
+                //     console.log(key + ":", value);
+                // });
             }}
             rightButtonClickHandler={()=>{console.log("취소")}}
         ></TitleLayout>

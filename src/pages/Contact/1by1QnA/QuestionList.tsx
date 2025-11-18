@@ -79,10 +79,14 @@ const qnaList:  QnaItemProps[] = [
 const QuestionList: React.FC<{}> = () => {
     const ITEMS_PER_PAGE = 6;
     const [currentPage, setCurrentPage] = useState(1);
+
     const totalPages = Math.ceil(qnaList.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const currentQnaList = qnaList.slice(startIndex, endIndex);
+    // const [totalPages, setTotalPages] = useState(0); 
+    // const [currentQnaList, setCurrentQnaList] = useState<QnaItemProps[]>([]); 
+    // currentPage가 바뀔떄마다 렌더링하여 데이터를 가져옴
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setCurrentPage(value);
