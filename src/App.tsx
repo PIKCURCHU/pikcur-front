@@ -6,6 +6,7 @@ import QuestionList from './pages/Contact/1by1QnA/QuestionList';
 import GoodsForm from './pages/Goods/GoodsForm';
 import SignIn from './pages/Auth/SignIn/SignIn';
 import StoreDetail from './pages/Store/StoreDetail';
+import FindId from './pages/Auth/FindAccount/FindId';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
                     <Route path="goodsForm" element={<GoodsForm />} />
                     <Route path="login" element={<SignIn />} />
                     <Route path="storeDetail" element={<StoreDetail isMyselfView={true} />} />
+                    <Route path="findId" element={<FindId />} />
                 </Routes>
             </BrowserRouter>
         </>
