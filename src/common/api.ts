@@ -1,115 +1,115 @@
-// 회사 예시 코드 / 이 파일이 무슨 역할을 할 것인지 인지용
+import axios, { AxiosRequestConfig, Method, AxiosHeaders } from "axios";
+import { logout } from "./utility";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
-// import axios, { AxiosResponseHeaders, InternalAxiosRequestConfig, RawAxiosResponseHeaders } from 'axios';
-// import { globalContext } from './globalContext';
-// import { doLogout } from './utility';
+const instance = axios.create({
+    baseURL: API_BASE_URL,
+    timeout: 8000,
+});
 
-// export type HttpMethod = "get" | "put" | "post" | "delete" | "upload" | "download" | "downpost";
+// 요청 인터셉터 (토큰 자동 적용)
+instance.interceptors.request.use((config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+        if (config.headers) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+    }
+    return config;
+});
 
-// export interface UniResponse<T = any, D = any> {
-//   data: T;
-//   status: number;
-//   statusText: string;
-//   headers: RawAxiosResponseHeaders | AxiosResponseHeaders | undefined;
-//   config: InternalAxiosRequestConfig<D> | undefined;
-//   request?: any;
-// }
+// 에러 공통 처리 (선택)
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401) {
+      if (!originalRequest.url?.includes("/auth/members/signin")) {
+        // 로그인 요청이 아닌 경우만 로그아웃
+        logout();
+        alert("세션이 만료되어 로그아웃 됩니다.");
+      }
+    } else {
+      console.error("API Error:", error.response || error);
+    }
+    return Promise.reject(error);
+  }
+);
 
-// export const getBaseUrl = () => import.meta.env.PROD ? import.meta.env.BASE_URL : '';
-// export const getApiUrl = () => `${getBaseUrl()}/api`;
+/**
+ * -----------------------------------------
+ * 핵심: 모든 요청을 처리하는 공통 API 함수
+ * -----------------------------------------
+ */
+export const apiRequest = async <T = any>(
+    method: Method,
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+) => {
+    const finalConfig: AxiosRequestConfig = {
+        method,
+        url,
+        ...config,
+    };
 
-// const findHostObjects = (window: any) => { 
-//   const chrom = window["chrome"];
-//   if (!chrom) return null;
+    // GET은 params, 나머지는 data 처리
+    if (method === "GET") {
+        finalConfig.params = data;
+    } else {
+        finalConfig.data = data;
+    }
 
-//   const hostObjects = chrom.webview?.hostObjects;
-//   if (!hostObjects) return null;
+    const res = await instance(finalConfig);
+    return res.data as T;
+};
 
-//   return hostObjects;
-// }
+/**
+ * -----------------------------------------
+ * 편의용 helper 함수들
+ * -----------------------------------------
+ */
+export const api = {
+    get: <T = any>(url: string, params?: any, config?: AxiosRequestConfig) =>
+        apiRequest<T>("GET", url, params, config),
 
-// const api: <T>(method: HttpMethod, url: string, params: {} | [] | FormData) => 
-//   Promise<UniResponse<T, any>> = (method, url, params) => {
-//   if (!url.startsWith("/api"))
-//     url = `/api${!url.startsWith("/") ? "/" + url : url}`;
+    post: <T = any>(url: string, body?: any, config?: AxiosRequestConfig) =>
+        apiRequest<T>("POST", url, body, config),
 
-//   if(globalContext.hostObjects == undefined)
-//     globalContext.hostObjects = findHostObjects(window);
+    put: <T = any>(url: string, body?: any, config?: AxiosRequestConfig) =>
+        apiRequest<T>("PUT", url, body, config),
 
-//   if(!globalContext.hostObjects)
-//     return apiByRest(method, url, params);
-//   else
-//     return apiByHost(method, url, params);
-// };
+    delete: <T = any>(url: string, body?: any, config?: AxiosRequestConfig) =>
+        apiRequest<T>("DELETE", url, body, config),
 
-// const apiByRest: <T>(method: HttpMethod, url: string, params: {} | [] | FormData) =>
-//   Promise<UniResponse<T, any>> = (method, url, params) => {
+    /**
+     * JSON 전송
+     */
+    json: <T = any>(method: Method, url: string, body?: any) =>
+        apiRequest<T>(method, url, body, {
+            headers: AxiosHeaders.from({ "Content-Type": "application/json" }),
+        }),
 
-//   if(url.startsWith("/api"))
-//     url = `${getBaseUrl()}${url}`;
+    /**
+     * FormData (multipart/form-data) 전송
+     */
+    formData: <T = any>(method: Method, url: string, form: FormData) =>
+        apiRequest<T>(method, url, form, {
+            headers: AxiosHeaders.from({ "Content-Type": "multipart/form-data" }),
+        }),
 
-//   if(url.startsWith("//"))
-//     url = url.substring(1);
+    /**
+     * x-www-form-urlencoded 전송
+     */
+    urlEncoded: <T = any>(method: Method, url: string, payload: any) => {
+        const params = new URLSearchParams();
+        Object.entries(payload).forEach(([key, value]) =>
+            params.append(key, String(value))
+        );
 
-//   const headers = {
-//     Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-//   };
-  
-//   switch (method) {
-//     case "get":
-//       return axios.get(url, { params, headers: headers });
-//     case "put":
-//       return axios.put(url, params, { headers: headers });
-//     case "post":
-//       return axios.post(url, params, { headers: headers });
-//     case "delete":
-//       return axios.delete(url, { params, headers: headers });
-//     case "upload":
-//       const uploadHeaders = {...headers, ...{ "Content-Type": "multipart/form-data" }};
-//       return axios.put(url, params, { headers: uploadHeaders });
-//     case "download":
-//       return axios.get(url, { params, headers: headers, responseType: "blob" });
-//     case "downpost":
-//       return axios.post(url, params, { headers: headers, responseType: "blob" });
-//     }
-// };
-
-// const apiByHost: <T>(method: HttpMethod, url: string, params: {} | [] | FormData) =>
-//   Promise<UniResponse<T, any>> = (method, url, params) => {
-//     var token = localStorage.getItem("auth-token");    
-//     const bridge = globalContext.hostObjects.bridge;
-
-//     return new Promise((resolve, reject) => {
-//       bridge.Run(method, url, token, JSON.stringify(params)).then((result: any) => {
-//         resolve({ data: JSON.parse(result), status: 200, statusText: "OK", headers: undefined, config: undefined });
-//       }).catch((error: any) => {
-//         reject(error);
-//       }
-//     )});
-// };
-
-// axios.interceptors.response.use(response => {
-//   return response;
-//   },
-//   error => {
-//     if(error.response?.data == "TokenExpired"){
-//       if(localStorage.getItem("auth-token")){
-//         doLogout();
-        
-//         alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-//         window.location.reload();
-//         return;
-//       }
-//     } else if(error.response?.status == 401){
-//       alert("해당 메뉴 또는 기능에 접근할 권한이 없습니다.");
-//       window.location.href = "/";
-//       return;
-//     }
-
-//     throw error;
-//   }
-// );
-
-// export default api;
-export {};
+        return apiRequest<T>(method, url, params, {
+            headers: AxiosHeaders.from({ "Content-Type": "application/x-www-form-urlencoded" }),
+        });
+    },
+};
