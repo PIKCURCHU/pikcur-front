@@ -10,7 +10,7 @@ const instance = axios.create({
 
 // 요청 인터셉터 (토큰 자동 적용)
 instance.interceptors.request.use((config) => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("token");
     if (token) {
         if (config.headers) {
             config.headers['Authorization'] = `Bearer ${token}`;
