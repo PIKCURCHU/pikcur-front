@@ -81,9 +81,9 @@ const SignIn: React.FC<SignInProps> = () => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', width: 241 }}>
                         <div style={{ cursor: 'pointer' }} onClick={() => navigate('/findId')}>아이디 찾기</div>
                         <div>/</div>
-                        <div style={{ cursor: 'pointer' }} onClick={() => { }}>비밀번호 찾기</div>
+                        <div style={{ cursor: 'pointer' }} onClick={() => navigate('/findPassword')}>비밀번호 찾기</div>
                     </div>
-                    <div style={{ cursor: 'pointer' }} onClick={() => { }}>회원가입</div>
+                    <div style={{ cursor: 'pointer' }} onClick={() => navigate('/signUp')}>회원가입</div>
                 </div>
             }
         />

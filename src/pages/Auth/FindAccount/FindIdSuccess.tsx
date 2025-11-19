@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AuthLayout from '../../../components/layout/AuthLayout';
 import { Button } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface FindIdSuccessProps {
     test?: string;
 }
 
 const FindIdSuccess: React.FC<FindIdSuccessProps> = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const [id, setId] = useState('');
+
+    const initHandler = () => {
+        const id = location.state?.id;
+        setId(id);
+    }
+
+    useEffect(() => {
+        initHandler();
+    }, [])
+
     return (
         <AuthLayout
             title="아이디 찾기"
@@ -23,13 +38,13 @@ const FindIdSuccess: React.FC<FindIdSuccessProps> = () => {
                         alignItems: 'center',
                         paddingLeft: '16px',
                         fontWeight: 'normal',
-                    }}>test</div>
+                    }}>{id}</div>
                     <div>
                         <div style={{ width: 326, height: '56px' }} />
                     </div>
                     <Button
                         type="button"
-                        onClick={() => { }}
+                        onClick={() => navigate('/login')}
                         style={{
                             backgroundColor: "#141414",
                             color: "#fff",
@@ -41,9 +56,9 @@ const FindIdSuccess: React.FC<FindIdSuccessProps> = () => {
                     </Button>
 
                     <div style={{ display: 'flex', justifyContent: 'center', width: 241 }}>
-                        <div style={{ cursor: 'pointer' }} onClick={() => { }}>비밀번호 찾기</div>
+                        <div style={{ cursor: 'pointer' }} onClick={() => navigate('/findPassword')}>비밀번호 찾기</div>
                     </div>
-                    <div style={{ cursor: 'pointer' }} onClick={() => { }}>회원가입</div>
+                    <div style={{ cursor: 'pointer' }} onClick={() => navigate('/signUp')}>회원가입</div>
                 </div>
             }
         />
