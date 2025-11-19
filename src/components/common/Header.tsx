@@ -1,4 +1,4 @@
-import React, { use } from 'react';
+import React, { use, useRef } from 'react';
 import logo from '../../assets/images/PikcurLogo.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-regular-svg-icons'; // ← 테두리만 있는 알람 아이콘
@@ -7,10 +7,12 @@ import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Typ
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import CustomAvatar from './CustomAvatar';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import CustomModal from './CustomModal';
+import { logout } from '../../common/utility';
 
 interface HeaderProps {
     isBasic?: boolean;
-    isAuth?: boolean;
     onSubmit?: () => void;
 }
 
@@ -106,11 +108,14 @@ const timeAgo = (date: Date): string => {
  *
  * @TODO React Router 적용, searchInput onSubmit 기능 구현
  * @param isBasic Basic Layout 여부 (true: Basic Layout, false: Auth Layout)) - 기본값은 true
- * @param isAuth 인증 여부 (true: 로그아웃 표출, false: 로그인 표출)
  * @param onSubmit SearchInput의 버튼 클릭 or 엔터 이벤트 함수
  * @returns 
  */
-const Header: React.FC<HeaderProps> = ({ isBasic = true, isAuth, onSubmit }) => {
+const Header: React.FC<HeaderProps> = ({ isBasic = true, onSubmit }) => {
+    const { isAuth } = useAuth();
+
+    const logoutModalRef = useRef<any>(null);
+
     const [isContactHovered, setIsContactHovered] = React.useState<boolean>(false);
     const [isHomeHovered, setIsHomeHovered] = React.useState<boolean>(false);
     const [isFAQHovered, setIsFAQHovered] = React.useState<boolean>(false);
@@ -264,7 +269,15 @@ const Header: React.FC<HeaderProps> = ({ isBasic = true, isAuth, onSubmit }) => 
                             <FontAwesomeIcon icon={faBell} style={{ cursor: 'pointer' }} onClick={toggleDrawer(true)} />
                         </div>
                         <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 14, fontWeight: 'bold' }}>
-                            <span style={{ cursor: 'pointer' }} onClick={() => navigate(isAuth ? '/logout' : '/login')}>
+                            <span 
+                            style={{ cursor: 'pointer' }} 
+                            onClick={() => {
+                                if (isAuth) {
+                                    logoutModalRef.current?.openModal();
+                                } else {
+                                    navigate('/login');
+                                }
+                            }}>
                                 {isAuth ? '로그아웃' : '로그인'}
                             </span>
                         </div>
@@ -274,6 +287,21 @@ const Header: React.FC<HeaderProps> = ({ isBasic = true, isAuth, onSubmit }) => 
                     </Drawer>
                 </>
             )}
+
+            <CustomModal
+                ref={logoutModalRef}
+                title="로그아웃"
+                content={
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ fontSize: 16, fontWeight: 'bold', color: '#141414' }}>로그아웃 하시곘습니까?</div>
+                    </div>
+                }
+                leftButtonContent="로그아웃"
+                onLeftButtonClick={() => {
+                    logout();
+                    logoutModalRef.current?.closeModal();
+                }}
+            />
         </div>
     );
 

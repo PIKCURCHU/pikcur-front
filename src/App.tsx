@@ -11,11 +11,12 @@ import FindIdSuccess from './pages/Auth/FindAccount/FindIdSuccess';
 import FindPassword from './pages/Auth/FindAccount/FindPassword';
 import FindPasswordSuccess from './pages/Auth/FindAccount/FindPasswordSuccess';
 import SignUp from './pages/Auth/SignUp/SignUp';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
 
     return (
-        <>
+        <AuthProvider>
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<MainPage />} />
@@ -31,7 +32,7 @@ function App() {
                     <Route path="signUp" element={<SignUp />} />
                 </Routes>
             </BrowserRouter>
-        </>
+        </AuthProvider>
     );
 }
 
