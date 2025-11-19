@@ -170,7 +170,7 @@ const Header: React.FC<HeaderProps> = ({ isBasic = true, isAuth, onSubmit }) => 
     return (
         <div style={{ height: '105px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #F2F2F2' }}>
             <div style={{ width: '200px', paddingLeft: '20px' }}>
-                <img src={logo} alt="Logo" style={{ cursor: 'pointer' }} />
+                <img src={logo} alt="Logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }} />
             </div>
 
             {isBasic && (

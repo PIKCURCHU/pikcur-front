@@ -3,12 +3,15 @@ import AuthLayout from '../../../components/layout/AuthLayout';
 import CustomInput from '../../../components/common/CustomInput';
 import { Button } from '@mui/material';
 import { api } from '../../../common/api';
+import { useNavigate } from 'react-router-dom';
 
 interface FindIdProps {
     test?: string;
 }
 
 const FindId: React.FC<FindIdProps> = () => {
+
+    const navigate = useNavigate();
 
     const [isDisabled, setIsDisabled] = useState(true);
     const [email, setEmail] = useState('');
@@ -28,17 +31,14 @@ const FindId: React.FC<FindIdProps> = () => {
             return;
         }
 
-        api.post("/auth/email/send-code", { email })
+        api.post("/auth/email/send-code-for-find", { email })
             .then((res) => {
                 alert("인증번호가 발송되었습니다.");
             })
             .catch((err) => {
-                const errorData = err.response.data;
+                const errorData = err.response?.data;
                 if (errorData) {
                     switch (errorData.code) {
-                        case "DUPLICATE":
-                            alert("이미 등록된 이메일입니다.");
-                            break;
                         case "MAIL_SEND_FAIL":
                             alert("메일 전송에 실패했습니다. 다시 시도해주세요.");
                             break;
@@ -60,12 +60,11 @@ const FindId: React.FC<FindIdProps> = () => {
 
         api.post("/auth/email/verify-code", { email, code })
             .then((res) => {
-                console.log(res.data);
                 alert("인증이 완료되었습니다.");
                 setIsDisabled(false);
             })
             .catch((err) => {
-                const errorData = err.response.data;
+                const errorData = err.response?.data;
                 if (errorData) {
                     switch (errorData.code) {
                         case "EXPIRATION":
@@ -84,13 +83,46 @@ const FindId: React.FC<FindIdProps> = () => {
             })
     }
 
+    const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(e.target.value);
+        setIsDisabled(true);
+        setCode("");
+    }
+
+    const nextButtonClickHandler = () => {
+        api.post("/auth/members/find-id", { email })
+            .then((res) => {
+                navigate('/findIdSuccess', { state: { id: res.data } });
+            })
+            .catch((err) => {
+                const errorData = err.response?.data;
+                if (errorData) {
+                    switch (errorData.code) {
+                        case "NOT_FOUND":
+                            alert("존재하지 않는 회원입니다.");
+                            break;
+                        default:
+                            alert(errorData.message || "알 수 없는 오류가 발생했습니다.");
+                            break;
+                    }
+                } else {
+                    alert("서버와 연결할 수 없습니다.");
+                }
+            })
+    }
+
     return (
         <AuthLayout
             title="아이디 찾기"
             content={
                 <div style={{ height: '346px', display: 'flex', flexDirection: 'column', gap: '30px', alignItems: 'center' }}>
                     <div>
-                        <CustomInput width={326} height={56} placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <CustomInput 
+                        width={326} 
+                        height={56} 
+                        placeholder="이메일" 
+                        value={email} 
+                        onChange={(e) => onEmailChange(e)} />
                         <Button
                             onClick={emailCodeButtonClickHandler}
                             style={{
@@ -120,7 +152,7 @@ const FindId: React.FC<FindIdProps> = () => {
                     <Button
                         type="button"
                         disabled={isDisabled}
-                        onClick={() => { }}
+                        onClick={nextButtonClickHandler}
                         style={{
                             backgroundColor: "#141414",
                             color: "#fff",
@@ -133,11 +165,11 @@ const FindId: React.FC<FindIdProps> = () => {
                     </Button>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', width: 241 }}>
-                        <div style={{ cursor: 'pointer' }} onClick={() => { }}>비밀번호 찾기</div>
+                        <div style={{ cursor: 'pointer' }} onClick={() => navigate('/findPassword')}>비밀번호 찾기</div>
                         <div>/</div>
-                        <div style={{ cursor: 'pointer' }} onClick={() => { }}>로그인</div>
+                        <div style={{ cursor: 'pointer' }} onClick={() => navigate('/login')}>로그인</div>
                     </div>
-                    <div style={{ cursor: 'pointer' }} onClick={() => { }}>회원가입</div>
+                    <div style={{ cursor: 'pointer' }} onClick={() => navigate('/signUp')}>회원가입</div>
                 </div>
             }
         />
