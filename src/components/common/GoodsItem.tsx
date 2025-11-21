@@ -46,27 +46,21 @@ const GoodsItem: React.FC<GoodsItemProps> = ({
     onLike,
     onUnlike
 }) => {
-    const [isLiked, setIsLiked] = useState(like);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMsg, setSnackbarMsg] = useState('');
 
-    useEffect(() => {
-        setIsLiked(like);
-    }, [like])
 
     const handleHeartClick = (e: React.MouseEvent) => {
-        e.stopPropagation(); // 클릭 이벤트가 부모 요소와 분리
+        e.stopPropagation();
 
-        if (isLiked) {
-            setIsLiked(false);
-            onUnlike();
-            setSnackbarMsg(`${goodsName}을(를) 찜 해제했습니다.`);
-            setOpenSnackbar(true);
-        } else {
-            setIsLiked(true);
-            onLike();
-            setSnackbarMsg(`${goodsName}을(를) 찜 했습니다.`);
-            setOpenSnackbar(true);
+        if (like) { 
+            onUnlike(); // onUnlike를 호출 (GoodsList에서 API 성공 시 상태 변경)
+            // setSnackbarMsg(`${goodsName}을(를) 찜 해제했습니다.`);
+            // setOpenSnackbar(true);
+        } else { 
+            onLike(); // onLike를 호출 (GoodsList에서 API 성공 시 상태 변경)
+            // setSnackbarMsg(`${goodsName}을(를) 찜 했습니다.`);
+            // setOpenSnackbar(true);
         }
     };
 
@@ -116,7 +110,7 @@ const GoodsItem: React.FC<GoodsItemProps> = ({
                     />
                     <FontAwesomeIcon
                         onClick={handleHeartClick}
-                        icon={isLiked ? faHeartSolid : faHeartRegular}
+                        icon={like ? faHeartSolid : faHeartRegular}                        
                         style={{
                             position: 'absolute',
                             top: 6,

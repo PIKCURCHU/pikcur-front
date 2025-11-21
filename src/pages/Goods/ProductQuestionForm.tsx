@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TitleLayout from '../../components/layout/TitleLayout';
 import CustomInput from '../../components/common/CustomInput';
 import CustomTextarea from '../../components/common/CustomTextarea';
 import ImageUploadGroup from '../../components/common/ImageUploadGroup';
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
 interface ImageState {
     file: File;
@@ -11,11 +12,19 @@ interface ImageState {
 }
 
 const ProductQuestionForm: React.FC<{}> = () => {
+    const location = useLocation();
     const [images, setImages] = useState<ImageState[]>([]);
     const [selectedPublicType, setSelectedPublicType] = useState('public'); 
     const handleChangePublicType = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedPublicType(event.target.value);
     };
+
+    useEffect(()=>{
+        if(location.state.goodsId) {
+            const goodsId = location.state.goodsId;
+            console.log(goodsId);
+        }
+    },[]);
 
     return (
         <TitleLayout

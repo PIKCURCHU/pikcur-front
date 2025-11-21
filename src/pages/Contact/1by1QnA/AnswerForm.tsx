@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TitleLayout from '../../../components/layout/TitleLayout';
 import CustomInput from '../../../components/common/CustomInput';
 import CustomTextarea from '../../../components/common/CustomTextarea';
 import ImageUploader from '../../../components/common/ImageUploader';
 import ImagePreview from '../../../components/common/ImagePreview';
 import ImageUploadGroup from '../../../components/common/ImageUploadGroup';
+import { useLocation } from 'react-router-dom';
+import { api } from '../../../common/api';
 
 interface ImageState {
     file: File;
@@ -12,7 +14,22 @@ interface ImageState {
 }
 
 const AnswerForm: React.FC<{}> = () => {
+    const location = useLocation();
     const [images, setImages] = useState<ImageState[]>([]);
+
+    const [title, setTitle] = useState<string>("");
+    const [content, setContent] = useState<string>("");
+    const [questionId, setQuestionId] = useState(0);
+
+    useEffect(()=>{
+        if(location.state.questionId) {
+            setQuestionId(location.state.questionId);
+        }
+    },[]);
+
+    const handleAnswerRegister = () => {
+        api.post(`/question/${questionId}/answer`)
+    }
 
     return (
         <TitleLayout

@@ -323,11 +323,11 @@ const GoodsForm: React.FC<{}> = () => {
                     formData.append("images", img.file);
                 });
             
-                const accessToken = localStorage.getItem("accessToken");
+                const token = localStorage.getItem("token");
                 axios.post("http://localhost:8080/goods", formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
-                        Authorization: `Bearer`,
+                        Authorization: `Bearer ` + token,
                     },
                 });
                 // console.log("===== FormData 내용 확인 =====");
