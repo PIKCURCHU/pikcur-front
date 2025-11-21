@@ -16,6 +16,7 @@ import ProductQuestionList from './component/ProductQuestionList';
 import FollowingList from './component/FollowingList';
 import GoodsList from './component/GoodsList';
 import CustomModal from '../../components/common/CustomModal';
+import { useNavigate } from 'react-router-dom';
 
 interface GoodsItemProps {
     src: string;
@@ -192,6 +193,9 @@ return {
 }
   
 const StoreDetail: React.FC<{ isMyselfView: boolean }> = ({ isMyselfView = true }) => {
+
+    const navigate = useNavigate();
+
     const [tab, setTab] = React.useState(0);
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
@@ -262,7 +266,7 @@ const StoreDetail: React.FC<{ isMyselfView: boolean }> = ({ isMyselfView = true 
                                 <Typography fontSize={16} color={'#757575'}>{Store.content}</Typography>
                             </div>
                             <div style={{marginRight:'20px'}}>
-                                <FontAwesomeIcon icon={faGear} onClick={()=>{console.log("설정으로 이동")}} cursor={'pointer'}></FontAwesomeIcon>
+                                <FontAwesomeIcon icon={faGear} onClick={()=>{navigate('/myPage')}} cursor={'pointer'}></FontAwesomeIcon>
                             </div>
                         </div>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

@@ -9,7 +9,6 @@ import CustomAvatar from './CustomAvatar';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import CustomModal from './CustomModal';
-import { logout } from '../../common/utility';
 
 interface HeaderProps {
     isBasic?: boolean;
@@ -112,7 +111,7 @@ const timeAgo = (date: Date): string => {
  * @returns 
  */
 const Header: React.FC<HeaderProps> = ({ isBasic = true, onSubmit }) => {
-    const { isAuth } = useAuth();
+    const { isAuth, logout } = useAuth();
 
     const logoutModalRef = useRef<any>(null);
 

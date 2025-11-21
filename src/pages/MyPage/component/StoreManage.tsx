@@ -1,22 +1,43 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SettingItem from '../../../components/common/SettingItem';
 import { Button } from '@mui/material';
 import CustomAvatar from '../../../components/common/CustomAvatar';
-import CustomModal from '../../../components/common/CustomModal';
+import { api } from '../../../common/api';
 
 interface StoreManageProps {
     initStatus?: boolean;
 }
 
 const StoreManage: React.FC<StoreManageProps> = ({ initStatus }) => {
-    const [isEditMode, setIsEditMode] = useState(initStatus);
-    const [storeInfo, setStoreInfo] = useState("");
+    const API_URL = process.env.REACT_APP_API_URL;
 
-    const storeNameRef = useRef<HTMLInputElement>(null);
-    const storeInfoRef = useRef<HTMLTextAreaElement>(null);
+    const [isEditMode, setIsEditMode] = useState(initStatus);
+
+    const [storeId, setStoreId] = useState('');
+    const [storeName, setStoreName] = useState('');
+    const [storeInfo, setStoreInfo] = useState('');
+    const [profile, setProfile] = useState<string | null>(null);
+
+    const [profileFile, setProfileFile] = useState<File | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const initHandler = () => {
-        // 초기화 함수
+        api.get('/mypage/store')
+            .then((res) => {
+                setStoreId(res.storeId);
+                setStoreName(res.storeName);
+                setStoreInfo(res.storeInfo);
+                setProfile(res.profile);
+            })
+            .catch((err) => {
+                const errorData = err.response?.data;
+                if (errorData) {
+                    alert(errorData.message || "알 수 없는 오류가 발생했습니다.");
+                    return;
+                } else {
+                    alert("서버와 연결할 수 없습니다.");
+                }
+            })
     }
 
     const editModeChangeHandler = () => {
@@ -24,7 +45,31 @@ const StoreManage: React.FC<StoreManageProps> = ({ initStatus }) => {
     }
 
     const submitHandler = () => {
-        // api 함수
+        const body = {
+            storeId,
+            storeName,
+            storeInfo
+        }
+
+        api.form.put('/mypage/store', body, profileFile || undefined, "store")
+            .then((res) => {
+                if (res > 0) {
+                    alert("상점 정보가 수정되었습니다.");
+                    initHandler();
+                    setProfileFile(null);
+                } else {
+                    alert("상점 정보 수정에 실패했습니다.");
+                }
+            })
+            .catch((err) => {
+                const errorData = err.response?.data;
+                if (errorData) {
+                    alert(errorData.message || "알 수 없는 오류가 발생했습니다.");
+                    return;
+                } else {
+                    alert("서버와 연결할 수 없습니다.");
+                }
+            })
 
         setIsEditMode(false);
     }
@@ -33,19 +78,44 @@ const StoreManage: React.FC<StoreManageProps> = ({ initStatus }) => {
         setStoreInfo(value);
     }
 
+    const onChangeFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setProfileFile(file);
+        setProfile(URL.createObjectURL(file));
+    };
+
+    useEffect(() => {
+        initHandler();
+    }, [])
+
     return (
         <div style={{ width: '100%', height: '448px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                 {!isEditMode ? (
-                    <div><CustomAvatar size={130} /></div>
+                    <div><CustomAvatar size={130} src={`${API_URL}${profile}`} /></div>
                 ) : (
-                    <div style={{ cursor: 'pointer' }} onClick={() => { }}><CustomAvatar size={130} /></div>
+                    <>
+                        <div style={{ cursor: 'pointer' }} onClick={() => fileInputRef.current?.click()}>
+                            <CustomAvatar 
+                                size={130} 
+                                src={profileFile ? profile : `${API_URL}${profile}`} 
+                            />
+                        </div>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            onChange={onChangeFileHandler}
+                        />
+                    </>
                 )}
             </div>
             <div style={{ width: '100%' }}>
                 {!isEditMode ? (
                     <>
-                        <SettingItem type="top" content="상점명" element={<>youzede</>} />
+                        <SettingItem type="top" content="상점명" element={<>{storeName}</>} />
                         <SettingItem type="bottom" height={111} content="상점 설명" element={
                             <div
                                 style={{
@@ -54,7 +124,7 @@ const StoreManage: React.FC<StoreManageProps> = ({ initStatus }) => {
                                     wordBreak: 'break-all',
                                 }}
                             >
-                                내용
+                                {storeInfo}
                             </div>
                         } />
                     </>
@@ -62,16 +132,14 @@ const StoreManage: React.FC<StoreManageProps> = ({ initStatus }) => {
                     <>
                         <SettingItem type="top" content="상점명" element={
                             <input
-                                ref={storeNameRef}
                                 type="text"
-                                value={'youzede'}
-                                // onChange={e => setNickname(e.target.value)}
+                                value={storeName}
+                                onChange={e => setStoreName(e.target.value)}
                                 style={{ width: '100%', height: 32, borderRadius: 8, border: '1px solid #D9D9D9', padding: '0 8px' }}
                             />
                         } />
                         <SettingItem type="bottom" height={111} content="상점 설명" element={
                             <textarea
-                                ref={storeInfoRef}
                                 value={storeInfo}
                                 onChange={e => onChangeStore(e.target.value)}
                                 style={{

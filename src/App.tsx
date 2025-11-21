@@ -12,6 +12,9 @@ import FindPassword from './pages/Auth/FindAccount/FindPassword';
 import FindPasswordSuccess from './pages/Auth/FindAccount/FindPasswordSuccess';
 import SignUp from './pages/Auth/SignUp/SignUp';
 import { AuthProvider } from './context/AuthContext';
+import MyPage from './pages/MyPage/MyPage';
+import TermsOfService from './pages/Auth/SignUp/TermsOfService';
+import SignUpSuccess from './pages/Auth/SignUp/SignUpSuccess';
 
 function App() {
 
@@ -23,6 +26,8 @@ function App() {
                     <Route path="faq" element={<FAQ />} />
                     <Route path="questionList" element={<QuestionList />} />
                     <Route path="goodsForm" element={<GoodsForm />} />
+
+                    {/* Auth Routes */}
                     <Route path="login" element={<SignIn />} />
                     <Route path="storeDetail" element={<StoreDetail isMyselfView={true} />} />
                     <Route path="findId" element={<FindId />} />
@@ -30,6 +35,12 @@ function App() {
                     <Route path="findPassword" element={<FindPassword />} />
                     <Route path="findPasswordSuccess" element={<FindPasswordSuccess />} />
                     <Route path="signUp" element={<SignUp />} />
+                    <Route path="termsOfService" element={<TermsOfService />} />
+                    <Route path="signUpSuccess" element={<SignUpSuccess />} />
+
+                    {/* MyPage Route */}
+                    <Route path="myPage" element={<MyPage />} />
+                    
                 </Routes>
             </BrowserRouter>
         </AuthProvider>

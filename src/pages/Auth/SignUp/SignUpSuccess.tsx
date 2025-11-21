@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpSuccess: React.FC = () => {
+
+    const navigate = useNavigate();
 
     return (
         <>
@@ -28,7 +31,7 @@ const SignUpSuccess: React.FC = () => {
                     </div>
                     <div style={{ paddingTop: 72, display: 'flex', justifyContent: 'center' }}>
                         <Button
-                            onClick={() => {}}
+                            onClick={() => navigate('/login')}
                             style={{
                                 backgroundColor: "#141414",
                                 color: '#fff',

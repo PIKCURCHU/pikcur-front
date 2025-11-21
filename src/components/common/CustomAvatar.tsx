@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 interface CustomAvatarProps {
-  src?: string;
+  src?: string | null;
   alt?: string;
   size?: number;
 }
@@ -22,7 +22,7 @@ interface CustomAvatarProps {
 const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, alt, size = 40 }) => {
   return (
     <Avatar
-      src={src}
+      src={src || undefined}
       alt={alt}
       sx={{ width: size, height: size, fontSize: size / 2 }}
     >

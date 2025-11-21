@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface AccountManageProps {
     initStatus?: boolean;
-    setSelectedSetting: (key: string) => void;
+    setSelectedSetting: React.Dispatch<React.SetStateAction<{ key: string; data?: any } | null>>;
 }
 
 // 임시 데이터
@@ -48,7 +48,7 @@ const AccountManage: React.FC<AccountManageProps> = ({ initStatus, setSelectedSe
     }
 
     const showEditComponent = () => {
-        setSelectedSetting('AccountEdit');
+        setSelectedSetting({ key: 'AccountEdit' });
     }
 
     const handleDeleteClick = (id: number) => {
