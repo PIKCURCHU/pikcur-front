@@ -5,7 +5,7 @@ import CustomAvatar from '../../../components/common/CustomAvatar';
 
 interface AccountEditProps {
     initStatus?: boolean;
-    setSelectedSetting: (key: string) => void;
+    setSelectedSetting: React.Dispatch<React.SetStateAction<{ key: string; data?: any } | null>>;
 }
 
 const AccountEdit: React.FC<AccountEditProps> = ({ initStatus, setSelectedSetting }) => {
@@ -19,10 +19,10 @@ const AccountEdit: React.FC<AccountEditProps> = ({ initStatus, setSelectedSettin
     const submitHandler = () => {
         // api 함수
 
-        setSelectedSetting('AccountManage');
+        setSelectedSetting({ key: 'AccountManage' });
     }
 
-    
+
     return (
         <div style={{ width: '100%', height: '448px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ width: '100%' }}>

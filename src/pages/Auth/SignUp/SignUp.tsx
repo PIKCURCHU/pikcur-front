@@ -190,24 +190,17 @@ const SignUp: React.FC<SignUpProps> = () => {
             return;
         }
 
-        api.post("/auth/members/signup", { id, password, email, name, phone, birth, gender })
-            .then((res) => {
-                if (res > 1) {
-                    alert("회원가입이 완료되었습니다.");
-                    navigate('/login');
-                    return;
-                } else {
-                    alert("회원가입에 실패했습니다. 다시 시도해주세요.");
-                }
-            })
-            .catch((err) => {
-                const errorData = err.response?.data;
-                if (errorData) {
-                    alert(errorData.message || "알 수 없는 오류가 발생했습니다.");
-                } else {
-                    alert("서버와 연결할 수 없습니다.");
-                }
-            })
+        navigate('/termsOfService', {
+            state: {
+                id,
+                password,
+                email,
+                name,
+                phone,
+                birth,
+                gender
+            }
+        });
     }
 
     return (

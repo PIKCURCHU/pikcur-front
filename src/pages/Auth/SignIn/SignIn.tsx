@@ -4,6 +4,7 @@ import CustomInput from '../../../components/common/CustomInput';
 import { Button } from '@mui/material';
 import { api } from '../../../common/api';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 
 interface SignInProps {
     test?: string;
@@ -11,6 +12,7 @@ interface SignInProps {
 
 const SignIn: React.FC<SignInProps> = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
@@ -31,6 +33,7 @@ const SignIn: React.FC<SignInProps> = () => {
                 localStorage.setItem("name", res.name);
                 localStorage.setItem("authority", res.authority);
 
+                login();
                 alert("로그인 성공");
                 navigate('/');
             })

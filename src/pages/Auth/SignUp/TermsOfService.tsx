@@ -1,7 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AuthLayout from '../../../components/layout/AuthLayout';
 import { Button, Checkbox, FormControlLabel, FormGroup, Typography } from '@mui/material';
 import TermsOfServiceModal, { ManageModalHandle } from './component/TermsOfServiceModal';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { api } from '../../../common/api';
 
 interface TermsOfServiceProps {
     test?: string;
@@ -9,9 +11,66 @@ interface TermsOfServiceProps {
 
 const TermsOfService: React.FC<TermsOfServiceProps> = () => {
 
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const signupData = location.state as {
+        id: string;
+        password: string;
+        email: string;
+        name: string;
+        phone: string;
+        birth: string;
+        gender: string;
+    };
+
     const termModalRef = useRef<ManageModalHandle>(null);
     const privacyModalRef = useRef<ManageModalHandle>(null);
     const serviceModalRef = useRef<ManageModalHandle>(null);
+
+    const [agreeAll, setAgreeAll] = useState(false);
+    const [agreeTerms, setAgreeTerms] = useState(false);
+    const [agreePrivacy, setAgreePrivacy] = useState(false);
+
+
+    const handleAgreeAll = (checked: boolean) => {
+        setAgreeAll(checked);
+        setAgreeTerms(checked);
+        setAgreePrivacy(checked);
+    };
+
+    const handleSubmit = () => {
+        if (!agreeTerms || !agreePrivacy) {
+            alert("모든 약관에 동의해주세요.");
+            return;
+        }
+
+        api.post("/auth/members/signup", signupData)
+            .then((res) => {
+                if (res > 0) {
+                    alert("회원가입이 완료되었습니다.");
+                    navigate('/signUpSuccess');
+                } else {
+                    alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+                }
+            })
+            .catch((err) => {
+                const errorData = err.response?.data;
+                if (errorData) {
+                    alert(errorData.message || "알 수 없는 오류가 발생했습니다.");
+                } else {
+                    alert("서버와 연결할 수 없습니다.");
+                }
+            });
+    };
+
+    useEffect(() => {
+        if (agreeTerms && agreePrivacy) {
+            setAgreeAll(true);
+        } else {
+            setAgreeAll(false);
+        }
+    }, [agreeTerms, agreePrivacy]);
 
     return (
         <AuthLayout
@@ -24,7 +83,10 @@ const TermsOfService: React.FC<TermsOfServiceProps> = () => {
                     <div style={{ display: 'flex', width: '100%', marginBottom: 80, height: '373px', border: '1px solid #E0E0E0', borderRadius: 8, flexDirection: 'column' }}>
                         <div style={{ flex: 1, borderBottom: '1px solid #E0E0E0', width: '100%', display: 'flex', alignItems: 'center', padding: '0px 26px' }}>
                             <FormControlLabel
-                                control={<Checkbox />}
+                                control={<Checkbox
+                                    checked={agreeAll}
+                                    onChange={(e) => handleAgreeAll(e.target.checked)}
+                                />}
                                 label={<span style={{ color: '#525252', fontSize: 20 }}>약관 동의</span>}
                             />
                         </div>
@@ -33,14 +95,26 @@ const TermsOfService: React.FC<TermsOfServiceProps> = () => {
                                 <div style={{ fontSize: 23, color: '#141414', fontWeight: 'bold', paddingBottom: 20 }}>필수 항목</div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <FormControlLabel
-                                        control={<Checkbox />}
+                                        control={<Checkbox
+                                            checked={agreeTerms}
+                                            onChange={(e) => {
+                                                setAgreeTerms(e.target.checked);
+                                                if (!e.target.checked) setAgreeAll(false);
+                                            }}
+                                        />}
                                         label={<span style={{ color: '#525252', fontSize: 20 }}>이용약관 동의</span>}
                                     />
                                     <div onClick={() => termModalRef.current?.openModal()} style={{ cursor: 'pointer', color: '#003FE9' }}>내용 보기 &nbsp;&nbsp;&gt;</div>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <FormControlLabel
-                                        control={<Checkbox />}
+                                        control={<Checkbox
+                                            checked={agreePrivacy}
+                                            onChange={(e) => {
+                                                setAgreePrivacy(e.target.checked);
+                                                if (!e.target.checked) setAgreeAll(false);
+                                            }}
+                                        />}
                                         label={<span style={{ color: '#525252', fontSize: 20 }}>개인정보 수집 및 이용 동의</span>}
                                     />
                                     <div onClick={() => privacyModalRef.current?.openModal()} style={{ cursor: 'pointer', color: '#003FE9' }}>내용 보기 &nbsp;&nbsp;&gt;</div>
@@ -60,7 +134,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = () => {
                     </div>
                     <Button
                         type="button"
-                        onClick={() => { }}
+                        onClick={handleSubmit}
                         style={{
                             backgroundColor: "#2563EB",
                             color: "#fff",

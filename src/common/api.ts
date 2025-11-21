@@ -6,6 +6,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL;
 const instance = axios.create({
     baseURL: API_BASE_URL,
     timeout: 8000,
+    withCredentials: true,
 });
 
 // 요청 인터셉터 (토큰 자동 적용)
@@ -19,22 +20,39 @@ instance.interceptors.request.use((config) => {
     return config;
 });
 
-// 에러 공통 처리 (선택)
 instance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const originalRequest = error.config;
-    if (error.response?.status === 401) {
-      if (!originalRequest.url?.includes("/auth/members/signin")) {
-        // 로그인 요청이 아닌 경우만 로그아웃
-        logout();
-        alert("세션이 만료되어 로그아웃 됩니다.");
-      }
-    } else {
-      console.error("API Error:", error.response || error);
+    (response) => response,
+    (error) => {
+        const originalRequest = error.config;
+        const data = error.response?.data;
+
+        if (error.code === 'ERR_NETWORK') {
+            alert("서버와 연결할 수 없습니다.");
+            return Promise.reject(error);
+        }
+
+        if (error.response?.status === 401) {
+
+            if (!originalRequest.url?.includes("/auth/members/signin")) {
+
+                if (data?.code === "EXPIRATION") {
+                    alert("로그인 시간이 만료되었습니다. 다시 로그인해주세요.");
+                } else if (data?.code === "NO_TOKEN") {
+                    alert("로그인이 필요합니다.");
+                } else {
+                    alert(data?.message || "인증 정보가 유효하지 않습니다.");
+                }
+
+                logout();
+            }
+        }
+
+        else {
+            if (data?.message) alert(data.message);
+        }
+
+        return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
 );
 
 /**
@@ -52,6 +70,7 @@ export const apiRequest = async <T = any>(
         method,
         url,
         ...config,
+        withCredentials: true,
     };
 
     // GET은 params, 나머지는 data 처리
@@ -94,10 +113,12 @@ export const api = {
     /**
      * FormData (multipart/form-data) 전송
      */
-    formData: <T = any>(method: Method, url: string, form: FormData) =>
-        apiRequest<T>(method, url, form, {
-            headers: AxiosHeaders.from({ "Content-Type": "multipart/form-data" }),
-        }),
+    form: {
+        post: <T = any>(url: string, data?: any, file?: File | File[], dataKey?: string) =>
+            sendForm<T>("POST", url, data, file, dataKey),
+        put: <T = any>(url: string, data?: any, file?: File | File[], dataKey?: string) =>
+            sendForm<T>("PUT", url, data, file, dataKey),
+    },
 
     /**
      * x-www-form-urlencoded 전송
@@ -113,3 +134,49 @@ export const api = {
         });
     },
 };
+
+/**
+ * data + file을 FormData로 자동 변환해서 전송하는 내부 함수
+ */
+function sendForm<T>(
+    method: Method,
+    url: string,
+    data?: any,
+    file?: File | File[],
+    dataKey?: string 
+) {
+    const form = new FormData();
+
+    if (data) {
+        if (dataKey) {
+            form.append(
+                dataKey,
+                new Blob([JSON.stringify(data)], { type: "application/json" })
+            );
+        } else {
+            Object.entries(data).forEach(([key, value]) => {
+                if (typeof value === "object" && !(value instanceof File)) {
+                    form.append(
+                        key,
+                        new Blob([JSON.stringify(value)], { type: "application/json" })
+                    );
+                } else {
+                    form.append(key, value as any);
+                }
+            });
+        }
+    }
+
+    if (file) {
+        if (Array.isArray(file)) {
+            file.forEach(f => form.append("image", f));
+        } else {
+            form.append("image", file);
+        }
+    }
+
+    return apiRequest<T>(method, url, form, {
+        headers: AxiosHeaders.from({ "Content-Type": "multipart/form-data" }),
+        withCredentials: true,
+    });
+}
