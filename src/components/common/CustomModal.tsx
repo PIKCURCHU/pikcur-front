@@ -1,5 +1,6 @@
 import { Button, Divider, Modal, Typography } from '@mui/material';
 import { Box } from '@mui/system';
+import { on } from 'events';
 import * as React from 'react';
 
 interface CustomModalProps {
@@ -8,6 +9,7 @@ interface CustomModalProps {
   leftButtonColor?: string;
   leftButtonContent?: string;
   onLeftButtonClick?: () => void;
+  onRightButtonClick?: () => void;
   height?: number | string;
   buttons?: React.ReactNode;
 }
@@ -55,6 +57,7 @@ const CustomModal = React.forwardRef<ManageModalHandle, CustomModalProps>(
       leftButtonColor,
       leftButtonContent,
       onLeftButtonClick,
+      onRightButtonClick,
       height,
       buttons,
     },
@@ -100,6 +103,14 @@ const CustomModal = React.forwardRef<ManageModalHandle, CustomModalProps>(
       openModal: () => handleOpen(),
       closeModal: () => setOpen(false),
     }));
+
+    const handleClose = () => {
+      setOpen(false);
+
+      if (onRightButtonClick) {
+        onRightButtonClick();
+      }
+    }
 
     return (
       <>
@@ -178,7 +189,7 @@ const CustomModal = React.forwardRef<ManageModalHandle, CustomModalProps>(
                   </Button>
                   <Button
                     variant="outlined"
-                    onClick={() => setOpen(false)}
+                    onClick={handleClose}
                     sx={{
                       height: 40,
                       width: 224,

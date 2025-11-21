@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { logout as performLogout } from "../common/utility";
 
 interface AuthContextType {
     isAuth: boolean;
+    login: () => void;
+    logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType>({ isAuth: false });
+const AuthContext = createContext<AuthContextType>({ isAuth: false, login: () => {}, logout: () => {} });
 
 interface AuthProviderProps {
     children: ReactNode;
@@ -18,8 +21,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsAuth(!!token);
     }, []);
 
+    const login = () => {
+        setIsAuth(true);
+    };
+
+    const logout = () => {
+        setIsAuth(false);
+        performLogout();
+    };
+
     return (
-        <AuthContext.Provider value={{ isAuth }}>
+        <AuthContext.Provider value={{ isAuth, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

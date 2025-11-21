@@ -1,43 +1,81 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SettingItem from '../../../components/common/SettingItem';
 import { Button, Radio } from '@mui/material';
 import CustomModal from '../../../components/common/CustomModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { api } from '../../../common/api';
 
 interface AddressManageProps {
     initStatus?: boolean;
-    setSelectedSetting: (key: string) => void;
+    setSelectedSetting: React.Dispatch<React.SetStateAction<{ key: string; data?: any } | null>>;
 }
 
-// 임시 데이터
-const tempData = [
-    { id: 1, name: '홍길동', address: '제주특별자치도 제주시 우도면 우도해안길 364-13', phone: '010-1234-5678' },
-    { id: 2, name: '김철수', address: '부산시 해운대구 해운대로 456', phone: '010-8765-4321' },
-    { id: 3, name: '이영희', address: '대구시 수성구 달구벌대로 789', phone: '010-1111-2222' },
-    { id: 4, name: '이영희', address: '대구시 수성구 달구벌대로 789', phone: '010-1111-2222' },
-];
+interface AddressItem {
+    addressId: number;
+    name: string;
+    address: string;
+    addressDetail: string;
+    phone: string;
+    isDefault: string;
+}
+
 
 const AddressManage: React.FC<AddressManageProps> = ({ initStatus, setSelectedSetting }) => {
     const [isEditMode, setIsEditMode] = useState(initStatus);
     const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
-    const [addressList, setAddressList] = useState(tempData);
-    const [selectedId, setSelectedId] = useState<number | null>(addressList[0]?.id ?? null);
+    const [addressList, setAddressList] = useState<AddressItem[]>([]);
+    const [selectedId, setSelectedId] = useState<number | null>(null);
+
+    const [name, setName] = useState<string>('');
+    const [address, setAddress] = useState<string>('');
+    const [addressDetail, setAddressDetail] = useState<string>('');
+    const [phone, setPhone] = useState<string>('');
 
     const deleteRef = useRef<any>(null);
     const addRef = useRef<any>(null);
 
     const initHandler = () => {
-        // 초기화 함수
-    }
-
-
-    const editModeChangeHandler = () => {
-        setIsEditMode(!isEditMode);
+        api.get("/mypage/address")
+            .then((res) => {
+                const sortedList = res.sort((a: AddressItem, b: AddressItem) => {
+                    if (a.isDefault === 'Y') return -1;
+                    if (b.isDefault === 'Y') return 1;
+                    return 0;
+                });
+                setAddressList(sortedList);
+            })
+            .catch((err) => {
+                const errorData = err.response?.data;
+                if (errorData) {
+                    alert(errorData.message || "알 수 없는 오류가 발생했습니다.");
+                    return;
+                } else {
+                    alert("서버와 연결할 수 없습니다.");
+                }
+            })
     }
 
     const majorAddressSubmitHandler = () => {
+        if (selectedId === null) {
+            alert("배송지가 없습니다.");
+            return;
+        }
 
+        api.put(`/mypage/address/${selectedId}/set-default`)
+            .then((res) => {
+                alert("주 배송지가 수정되었습니다.");
+                initHandler();
+            })
+            .catch((err) => {
+                const errorData = err.response?.data;
+                if (errorData) {
+                    alert(errorData.message || "알 수 없는 오류가 발생했습니다.");
+                    return;
+                } else {
+                    alert("서버와 연결할 수 없습니다.");
+                }
+            })
     }
 
     const submitHandler = () => {
@@ -46,33 +84,126 @@ const AddressManage: React.FC<AddressManageProps> = ({ initStatus, setSelectedSe
         setIsEditMode(false);
     }
 
-    const showEditComponent = () => {
-        setSelectedSetting('AddressEdit');
+    const showEditComponent = (addressId: number) => {
+        const addressData = addressList.find(item => item.addressId === addressId);
+        if (addressData) {
+            setSelectedSetting({ key: 'AddressEdit', data: addressData });
+        }
     }
 
-    const handleDeleteClick = (id: number) => {
-        setDeleteTargetId(id);
+    const handleDeleteClick = (addressId: number) => {
+        setDeleteTargetId(addressId);
         deleteRef.current?.openModal();
     };
 
     const handleDeleteConfirm = () => {
-        setAddressList(prev => {
-            const updated = prev.filter(item => item.id !== deleteTargetId);
-            setSelectedId(updated[0]?.id ?? null);
-            return updated;
-        });
+
+        const addressId = deleteTargetId;
+        api.delete(`/mypage/address/${addressId}`)
+            .then((res) => {
+                if (res > 0) {
+                    alert("삭제가 완료되었습니다");
+                    initHandler();
+                }
+            })
+            .catch((err) => {
+                const errorData = err.response?.data;
+                if (errorData) {
+                    alert(errorData.message || "알 수 없는 오류가 발생했습니다.");
+                    return;
+                } else {
+                    alert("서버와 연결할 수 없습니다.");
+                }
+            })
+
         setDeleteTargetId(null);
         deleteRef.current?.closeModal();
     };
 
+    const handleAddressModalClose = () => {
+        setName('');
+        setAddress('');
+        setAddressDetail('');
+        setPhone('');
+        addRef.current?.closeModal();
+    };
+
+    const handleSubmitHandler = () => {
+        if (!name) {
+            alert("이름을 입력해주세요.");
+            return;
+        }
+        if (!phone) {
+            alert("전화번호를 입력해주세요.");
+            return;
+        }
+        if (!address) {
+            alert("주소를 입력해주세요.");
+            return;
+        }
+        if (!addressDetail) {
+            alert("상세주소를 입력해주세요.");
+            return;
+        }
+
+        api.post('/mypage/address', {
+            name, phone, address, addressDetail
+        })
+        .then((res) => {
+            if (res > 0) {
+                alert("주소가 추가되었습니다.");
+                handleAddressModalClose();
+                initHandler()
+            }
+        })
+        .catch((err) => {
+            const errorData = err.response?.data;
+            if (errorData) {
+                alert(errorData.message || "알 수 없는 오류가 발생했습니다.");
+                return;
+            } else {
+                alert("서버와 연결할 수 없습니다.");
+            }
+        })
+    }
+
+    const openAddressPopup = () => {
+        if (window.daum && window.daum.Postcode) {
+            new window.daum.Postcode({
+                oncomplete: function (data: any) {
+                    const fullAddress = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+                    setAddress(fullAddress);
+                }
+            }).open();
+        } else {
+            alert('주소 검색 서비스를 불러올 수 없습니다.');
+        }
+    };
+
+    useEffect(() => {
+        initHandler();
+    }, [])
+
+    useEffect(() => {
+        if (addressList.length > 0) {
+            const defaultAddress = addressList.find(item => item.isDefault === "Y");
+
+            if (defaultAddress) {
+                setSelectedId(defaultAddress.addressId);
+            } else {
+                setSelectedId(addressList[0].addressId);
+            }
+        }
+    }, [addressList]);
+
     return (
         <div style={{ width: '100%', height: '448px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', overflowY: 'auto', minHeight: 0, flex: 1 }}>
-                {addressList.length > 0 ? addressList.map(item => (
+                {addressList.length > 0 ? addressList.map((item: any) => (
                     <>
                         <div style={{ paddingBottom: 23 }}>
                             <SettingItem
-                                key={item.id}
+                                key={item.addressId}
                                 type="single"
                                 elementRight={true}
                                 maxWidth="10%"
@@ -85,27 +216,27 @@ const AddressManage: React.FC<AddressManageProps> = ({ initStatus, setSelectedSe
                                         </div>
                                         <div style={{ display: 'flex', gap: 8 }}>
                                             <Button
-                                                onClick={showEditComponent}
+                                                onClick={() => showEditComponent(item.addressId)}
                                                 style={{ fontSize: 14, borderRadius: 8, height: 32, color: '#141414', backgroundColor: '#F2F2F2' }}>수정</Button>
                                             <Button
-                                                onClick={() => handleDeleteClick(item.id)}
+                                                onClick={() => handleDeleteClick(item.addressId)}
                                                 style={{ fontSize: 14, borderRadius: 8, height: 32, color: '#141414', backgroundColor: '#F2F2F2' }}>삭제</Button>
                                         </div>
                                     </div>
                                 }
                                 element={
                                     <Radio
-                                        checked={selectedId === item.id}
-                                        onChange={() => setSelectedId(item.id)}
-                                        value={item.id}
+                                        checked={selectedId === item.addressId}
+                                        onChange={() => setSelectedId(item.addressId)}
+                                        value={item.addressId}
                                         color="default"
                                     />
                                 }
                                 style={{
-                                    border: selectedId === item.id
+                                    border: selectedId === item.addressId
                                         ? '2px solid #141414'
                                         : '1px solid #D9D9D9',
-                                    boxShadow: selectedId === item.id
+                                    boxShadow: selectedId === item.addressId
                                         ? '0 0 0 2px #E6F4FF'
                                         : 'none',
                                     transition: 'border 0.2s',
@@ -186,6 +317,8 @@ const AddressManage: React.FC<AddressManageProps> = ({ initStatus, setSelectedSe
                 content={
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                         <input
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             type="text"
                             placeholder="이름"
                             style={{
@@ -199,6 +332,8 @@ const AddressManage: React.FC<AddressManageProps> = ({ initStatus, setSelectedSe
                             }}
                         />
                         <input
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
                             type="text"
                             placeholder="전화번호"
                             style={{
@@ -213,6 +348,8 @@ const AddressManage: React.FC<AddressManageProps> = ({ initStatus, setSelectedSe
                         />
                         <div style={{ width: '82%', display: 'flex', gap: 8, height: 36 }}>
                             <input
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
                                 type="text"
                                 placeholder="주소"
                                 style={{
@@ -226,6 +363,7 @@ const AddressManage: React.FC<AddressManageProps> = ({ initStatus, setSelectedSe
                                 }}
                             />
                             <Button
+                                onClick={openAddressPopup}
                                 style={{
                                     height: '100%',
                                     minWidth: 90,
@@ -238,6 +376,8 @@ const AddressManage: React.FC<AddressManageProps> = ({ initStatus, setSelectedSe
                             >배송지 검색</Button>
                         </div>
                         <input
+                            value={addressDetail}
+                            onChange={(e) => setAddressDetail(e.target.value)}
                             type="text"
                             placeholder="상세 주소"
                             style={{
@@ -253,7 +393,8 @@ const AddressManage: React.FC<AddressManageProps> = ({ initStatus, setSelectedSe
                     </div>
                 }
                 leftButtonContent="추가"
-                onLeftButtonClick={handleDeleteConfirm}
+                onLeftButtonClick={handleSubmitHandler}
+                onRightButtonClick={handleAddressModalClose}
             />
         </div>
     );

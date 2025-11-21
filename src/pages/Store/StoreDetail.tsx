@@ -20,6 +20,7 @@ import { useAuth } from '../../context/AuthContext';
 import { api } from '../../common/api';
 import { NumberLiteralType } from 'typescript';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 const selectGenderList: string[] = [
@@ -51,6 +52,7 @@ const StoreDetail: React.FC<{}> = () => {
     const location = useLocation();
 
     const [store, setStore] = useState<StoreData>();
+
     const reportModalRef = useRef<any>(null);
     const blockModalRef = useRef<any>(null);
 

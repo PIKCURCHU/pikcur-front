@@ -18,26 +18,45 @@ import AccountDeletion from './component/AccountDeletion';
 
 const MyPage: React.FC = () => {
     const [menu, setMenu] = useState("profile");
-    const [selectedSetting, setSelectedSetting] = useState<string | null>(null);
+    const [selectedSetting, setSelectedSetting] = useState<{ key: string; data?: any } | null>(null);
 
     const logoutModalRef = useRef<any>(null);
 
-    const settingComponentMap: Record<string, React.ReactNode> = {
-        'ProfileManage': <ProfileManage initStatus={false} />,
-        'StoreManage': <StoreManage initStatus={false} />,
-        'AddressManage': <AddressManage initStatus={false} setSelectedSetting={setSelectedSetting} />,
-        'AddressEdit': <AddressEdit setSelectedSetting={setSelectedSetting} />,
-        'AccountManage': <AccountManage setSelectedSetting={setSelectedSetting} />,
-        'AccountEdit': <AccountEdit setSelectedSetting={setSelectedSetting} />,
+    const renderSettingComponent = () => {
+        if (!selectedSetting) return null;
 
-        'AlarmSetting': <AlarmSetting />,
-        'BlockSetting': <BlockSetting />,
-        'PrivacyPolicy': <PrivacyPolicy />,
-        'TermOfService': <TermOfService />,
-        'VersionInfo': <VersionInfo />,
+        const { key, data } = selectedSetting;
 
-        'PasswordEdit': <PasswordEdit />,
-        'AccountDeletion': <AccountDeletion />,
+        switch (key) {
+            case 'ProfileManage':
+                return <ProfileManage initStatus={false} />;
+            case 'StoreManage':
+                return <StoreManage initStatus={false} />;
+            case 'AddressManage':
+                return <AddressManage initStatus={false} setSelectedSetting={setSelectedSetting} />;
+            case 'AddressEdit':
+                return <AddressEdit setSelectedSetting={setSelectedSetting} data={data} />;
+            case 'AccountManage':
+                return <AccountManage setSelectedSetting={setSelectedSetting} />;
+            case 'AccountEdit':
+                return <AccountEdit setSelectedSetting={setSelectedSetting}  />;
+            case 'AlarmSetting':
+                return <AlarmSetting />;
+            case 'BlockSetting':
+                return <BlockSetting />;
+            case 'PrivacyPolicy':
+                return <PrivacyPolicy />;
+            case 'TermOfService':
+                return <TermOfService />;
+            case 'VersionInfo':
+                return <VersionInfo />;
+            case 'PasswordEdit':
+                return <PasswordEdit />;
+            case 'AccountDeletion':
+                return <AccountDeletion />;
+            default:
+                return null;
+        }
     };
 
     const onMenuClick = (value: string) => {
@@ -46,7 +65,7 @@ const MyPage: React.FC = () => {
     };
 
     const handleSettingClick = (key: string) => {
-        setSelectedSetting(key);
+        setSelectedSetting({key});
     };
 
     return (
@@ -57,7 +76,7 @@ const MyPage: React.FC = () => {
                 content={
                     selectedSetting ? (
                         <div style={{ width: '100%', height: 'calc(100% - 30px)' }}>
-                            {settingComponentMap[selectedSetting]}
+                            {renderSettingComponent()}
                         </div>
                     ) : (
                         menu === "profile" ? (

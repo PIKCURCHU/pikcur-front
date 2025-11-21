@@ -11,6 +11,10 @@ declare global {
     align?: TableCellProps["align"];
     render?: (value: any, row?: any) => React.ReactNode;
   }
+
+  interface Window {
+    daum: any;
+  }
 }
 
 export {};
