@@ -6,6 +6,7 @@ import PaginationButtons from '../../../components/common/PaginationButtons';
 import { api } from '../../../common/api';
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { formatDate } from '../../../common/utility';
 
 interface GoodsItemProps {
     imagePath: string;
@@ -144,18 +145,6 @@ const GoodsList: React.FC<{ storeId: number }> = ({ storeId }) => {
         } else {
             alert("로그인이 필요합니다.");
         }
-    };
-
-    const formatDate = (dateStr: string) => {
-        if (!dateStr) return "";
-        const date = new Date(dateStr);
-        
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        
-        // 시간 정보(hours, minutes)는 제외하고 날짜만 반환
-        return `${year}-${month}-${day}`; 
     };
 
     return (

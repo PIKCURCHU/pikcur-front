@@ -224,4 +224,4 @@ export const createStompClient = () => {
     return stompClient;
 };
 
-export default createStompClient();
+export const stompClient = createStompClient();
