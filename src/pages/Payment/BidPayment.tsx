@@ -16,7 +16,7 @@ interface PaymentProps {
     payPrice?: number;
 }
 
-const Payment: React.FC<PaymentProps> = ({
+const BidPayment: React.FC<PaymentProps> = ({
     receiver, setReceiver,
     phone, setPhone,
     address, setAddress,
@@ -121,4 +121,4 @@ const Payment: React.FC<PaymentProps> = ({
         );
     };
 
-export default Payment;
+export default BidPayment;

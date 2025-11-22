@@ -12,6 +12,7 @@ import ProductQuestionList from './component/ProductQuestionList';
 import FollowingList from './component/FollowingList';
 import { api } from '../../common/api';
 import BaseLayout from '../../components/layout/BaseLayout';
+import { useNavigate } from 'react-router-dom';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -53,6 +54,8 @@ function CustomTabPanel(props: TabPanelProps) {
     }
 
 const MyStoreDetail: React.FC<{}> = () => {
+    const navigate = useNavigate();
+
     const [tab, setTab] = React.useState(0);
     const [store, setStore] = useState<StoreData>();
 
@@ -93,7 +96,7 @@ const MyStoreDetail: React.FC<{}> = () => {
                             <Typography fontSize={16} color={'#757575'}>{store.storeInfo}</Typography>
                         </div>
                         <div style={{marginRight:'20px'}}>
-                            <FontAwesomeIcon icon={faGear} onClick={()=>{console.log("설정으로 이동")}} cursor={'pointer'}></FontAwesomeIcon>
+                            <FontAwesomeIcon icon={faGear} onClick={()=>{navigate('/myPage')}} cursor={'pointer'}></FontAwesomeIcon>
                         </div>
                     </div>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

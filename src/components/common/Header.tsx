@@ -9,8 +9,7 @@ import CustomAvatar from './CustomAvatar';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import CustomModal from './CustomModal';
-import { stompClient, api } from '../../common/api';
-
+import { stompClient,  api } from '../../common/api';
 interface HeaderProps {
     isBasic?: boolean;
     onSubmit?: () => void;
@@ -226,7 +225,7 @@ const Header: React.FC<HeaderProps> = ({ isBasic = true, onSubmit }) => {
 
                     <div style={{ flex: 1 }} />
 
-                    <div style={{ marginRight: '42px' }}>
+                    <div style={{ marginRight: '42px', cursor: 'pointer' }} onClick={() => {navigate('/searchPage')}}>
                         <SearchInput width={200} height={40} placeholder='Search' onSubmit={onSubmit || (() => { })} />
                     </div>
 
