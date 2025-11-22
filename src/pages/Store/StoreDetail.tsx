@@ -101,6 +101,19 @@ const StoreDetail: React.FC<{}> = () => {
         setOpenSnackbar(false);
     };
 
+    const handleStoreReport = () =>{
+        if (location.state.storeId) {
+            const storeId = location.state.storeId;
+            api.post(`/store/report/${storeId}`)
+            .then((res)=>{
+                alert('신고 처리 로직 실행');
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+    }
+    }
+
     const action = (
         <React.Fragment>
             <IconButton
@@ -233,14 +246,14 @@ const StoreDetail: React.FC<{}> = () => {
                                 content={
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', alignItems: 'center' }}>
                                         <div style={{ fontSize: 22, fontWeight: 'bold', color: '#141414', visibility: 'hidden' }}>&nbsp;</div>
-                                        <div style={{ fontSize: 14, fontWeight: 'bold', color: '#757575', paddingBottom: 30 }}>상점 32434호</div>
+                                        <div style={{ fontSize: 14, fontWeight: 'bold', color: '#757575', paddingBottom: 30 }}>{store.storeName}</div>
                                         <div style={{ fontSize: 16, fontWeight: 'bold', color: '#141414' }}>해당 상점을 신고하시겠습니까?</div>
                                     </div>
                                 }
                                 leftButtonContent="신고"
                                 leftButtonColor="red"
                                 onLeftButtonClick={() => {
-                                    alert('신고 처리 로직 실행');
+                                    handleStoreReport()
                                     reportModalRef.current?.closeModal();
                                 }}
                             />

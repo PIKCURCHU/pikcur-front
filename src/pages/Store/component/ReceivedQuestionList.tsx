@@ -62,7 +62,7 @@ const ReceivedQuestionList:React.FC<{storeId:number}> = ({storeId}) => {
     }, []);
 
     const handleQuestionDetail = (questionId:number) => {
-        navigate("/questionDetail", {state:{questionId}});
+        navigate("/questionDetail", {state:{questionId, storeId}});
     }
 
     return (

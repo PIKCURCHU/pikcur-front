@@ -17,7 +17,7 @@ interface ImageState {
 interface AnswerInfo {
     title: string;
     content: string;
-    imagePath: string[];
+    imagePath: string | null;
     answerId: number;
 }
 
@@ -26,7 +26,7 @@ interface QuestionItemProps {
     storeId: number; // 문의를 받은 상점
     title: string;
     content: string;
-    imagePath: string[];
+    imagePath: string | null;
     answerInfo: AnswerInfo;
 }
 
@@ -34,20 +34,19 @@ const ProductQuestionDetail: React.FC<{}> = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [questionDetail, setQuestionDetail] = useState<QuestionItemProps>();
-
+ 
     const buttons = useMemo(() => {
-        if (questionDetail?.answerInfo == null && location.state.storeId == questionDetail?.storeId) { 
-            console.log(location.state.storeId);
+        if (questionDetail && questionDetail.answerInfo == null && location.state?.storeId == questionDetail.storeId) { 
             return {
                 leftName: "답변 등록",
                 rightName: "취소",
-                leftHandler: () => handleAnswerPage(questionDetail?.questionId || 0),
+                leftHandler: () => handleAnswerPage(questionDetail.questionId), 
                 rightHandler: () => console.log("취소"),
             };
         } else {
             return null;
         }
-    }, []);
+    }, [questionDetail, location.state.storeId]);
 
     const handleAnswerPage = (questionId:number)=> {
         navigate(`/answerForm`, {state:{questionId}})
@@ -99,9 +98,10 @@ const ProductQuestionDetail: React.FC<{}> = () => {
                 </div>
                 <div style={{ fontSize: 18, fontWeight: 'normal', color: '#141414', display:'flex', flexDirection:'column', marginTop:'27px', gap:'11px' }}>
                     이미지
-                    <ImagePreview images={questionDetail?.imagePath || []} /> 
-                </div>
-                
+                    <ImagePreview 
+                        images={questionDetail?.imagePath ? [questionDetail.imagePath] : []}
+                    />                
+                    </div>
 
                 {/*  답변 완료일 때만 답변 내용을 보여줌. */}
                 {questionDetail?.answerInfo != null && (
@@ -129,8 +129,10 @@ const ProductQuestionDetail: React.FC<{}> = () => {
                         </div>
                         <div style={{ fontSize: 18, fontWeight: 'normal', color: '#141414', display:'flex', flexDirection:'column', gap:'11px' }}>
                             이미지
-                            <ImagePreview images={questionDetail.answerInfo.imagePath || []} /> 
-                        </div>
+                            <ImagePreview 
+                                images={questionDetail.answerInfo.imagePath ? [questionDetail.answerInfo.imagePath] : []} 
+                            />                        
+                            </div>
                     </div>
                 )}
 

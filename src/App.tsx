@@ -12,7 +12,6 @@ import FindPassword from './pages/Auth/FindAccount/FindPassword';
 import FindPasswordSuccess from './pages/Auth/FindAccount/FindPasswordSuccess';
 import SignUp from './pages/Auth/SignUp/SignUp';
 import { AuthProvider } from './context/AuthContext';
-<<<<<<< HEAD
 import ReviewDetail from './pages/Store/ReviewDetail';
 import MyStoreDetail from './pages/Store/MyStoreDetail';
 import GoodsDetail from './pages/Goods/GoodsDetail';
@@ -25,11 +24,6 @@ import AnswerForm from './pages/Contact/1by1QnA/AnswerForm';
 import TermsOfService from './pages/Auth/SignUp/TermsOfService';
 import SignUpSuccess from './pages/Auth/SignUp/SignUpSuccess';
 import MyPage from './pages/MyPage/MyPage';
-=======
-import MyPage from './pages/MyPage/MyPage';
-import TermsOfService from './pages/Auth/SignUp/TermsOfService';
-import SignUpSuccess from './pages/Auth/SignUp/SignUpSuccess';
->>>>>>> upstream/main
 
 function App() {
 

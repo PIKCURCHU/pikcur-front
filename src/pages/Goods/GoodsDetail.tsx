@@ -91,6 +91,19 @@ const GoodsDetail: React.FC = () => {
         payModalRef.current?.closeModal();
     };
 
+    const handleGoodsReport = () => {
+        if (location.state.goodsId) {
+            const goodsId = location.state.goodsId;
+            api.post(`/goods/report/${goodsId}`)
+            .then((res)=>{
+                alert('신고 처리 로직 실행');
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+    }
+    }
+
     const formattedQuestionList = questionList.map((q, index) => ({
         questionId: q.questionId,
         title: q.title,
@@ -339,28 +352,14 @@ const GoodsDetail: React.FC = () => {
                                 page={currentPage}
                                 onChange={handlePageChange}></PaginationButtons>
                         </div>
-
-                        <CustomModal
-                            ref={payModalRef}
-                            title="즉결 신청"
-                            content={
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', alignItems: 'center' }}>
-                                    <div style={{ fontSize: 22, fontWeight: 'bold', color: '#141414' }}>12,000원</div>
-                                    <div style={{ fontSize: 14, fontWeight: 'bold', color: '#757575', paddingBottom: 30 }}>프리즘 워크 헌팅 자켓</div>
-                                    <div style={{ fontSize: 16, fontWeight: 'bold', color: '#141414' }}>해당 상품을 바로 구매하시겠습니까?</div>
-                                </div>
-                            }
-                            leftButtonContent="즉시 결제"
-                            onLeftButtonClick={() => {
-                                alert('결제 처리 로직 실행');
-                                payModalRef.current?.closeModal();
-                            }}
-                        /> 
+ 
                         <CustomModal
                             ref={payModalRef}
                             title="결제"
                             content={
                                 <Payment
+                                    goodsName={goods?.goodsName ?? ""}
+                                    payPrice={(goods?.buyoutPrice ?? 0) + (goods?.shippingPrice ?? 0)}
                                     receiver={receiver}
                                     setReceiver={setReceiver}
                                     phone={phone}
@@ -382,14 +381,14 @@ const GoodsDetail: React.FC = () => {
                             content={
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', alignItems: 'center' }}>
                                     <div style={{ fontSize: 22, fontWeight: 'bold', color: '#141414', visibility: 'hidden' }}>&nbsp;</div>
-                                    <div style={{ fontSize: 14, fontWeight: 'bold', color: '#757575', paddingBottom: 30 }}>프리즘 워크 헌팅 자켓</div>
+                                    <div style={{ fontSize: 14, fontWeight: 'bold', color: '#757575', paddingBottom: 30 }}>{goods?.goodsName}</div>
                                     <div style={{ fontSize: 16, fontWeight: 'bold', color: '#141414' }}>해당 상품을 신고하시겠습니까?</div>
                                 </div>
                             }
                             leftButtonContent="신고"
                             leftButtonColor="red"
                             onLeftButtonClick={() => {
-                                alert('신고 처리 로직 실행');
+                                handleGoodsReport()
                                 reportModalRef.current?.closeModal();
                             }}
                         />

@@ -324,12 +324,8 @@ const GoodsForm: React.FC<{}> = () => {
                 });
             
                 const token = localStorage.getItem("token");
-                axios.post("http://localhost:8080/goods", formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                        Authorization: `Bearer ` + token,
-                    },
-                });
+                axios.post("http://localhost:8080/goods", formData
+                );
                 // console.log("===== FormData 내용 확인 =====");
                 // formData.forEach((value, key) => {
                 //     console.log(key + ":", value);
