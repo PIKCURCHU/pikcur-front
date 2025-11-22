@@ -16,7 +16,7 @@ import {
   faBan, faHeart as faHeartSolid
 } from '@fortawesome/free-solid-svg-icons';
 import { ManageModalHandle } from '../Auth/SignUp/component/TermsOfServiceModal';
-import Payment from '../Payment/Payment';
+import Payment from '../Payment/BidPayment';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../../common/api';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';

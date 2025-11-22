@@ -24,6 +24,8 @@ import AnswerForm from './pages/Contact/1by1QnA/AnswerForm';
 import TermsOfService from './pages/Auth/SignUp/TermsOfService';
 import SignUpSuccess from './pages/Auth/SignUp/SignUpSuccess';
 import MyPage from './pages/MyPage/MyPage';
+import SearchPage from './pages/Main/SearchPage';
+import SearchGoodsList from './pages/Main/SearchGoodsList';
 
 function App() {
 
@@ -53,12 +55,17 @@ function App() {
                     <Route path="findPassword" element={<FindPassword />} />
                     <Route path="findPasswordSuccess" element={<FindPasswordSuccess />} />
                     <Route path="signUp" element={<SignUp />} />
-                    
+
                     <Route path="termsOfService" element={<TermsOfService />} />
                     <Route path="signUpSuccess" element={<SignUpSuccess />} />
 
                     {/* MyPage Route */}
                     <Route path="myPage" element={<MyPage />} />
+
+                    {/* Search Route */}
+                    <Route path="searchPage" element={<SearchPage />} />
+                    <Route path="searchGoodsList" element={<SearchGoodsList />} />
+
                 </Routes>
             </BrowserRouter>
         </AuthProvider>

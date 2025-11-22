@@ -3,7 +3,7 @@ import PaginationButtons from '../../../components/common/PaginationButtons';
 import CustomTable from '../../../components/common/CustomTable';
 import { Typography } from '@mui/material';
 import CustomModal from '../../../components/common/CustomModal';
-import Payment from '../../Payment/Payment';
+import BidPayment from '../../Payment/BidPayment';
 import { ManageModalHandle } from '../../Auth/SignUp/component/TermsOfServiceModal';
 import { api } from '../../../common/api';
 
@@ -22,7 +22,7 @@ interface bidItemProps {
 }
 
 
-const WinBidItem: React.FC<{storeId:number}> = ({storeId}) => {
+const WinBidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [winbidList, setWinBidList] = useState<bidItemProps[]>([]);
@@ -31,7 +31,7 @@ const WinBidItem: React.FC<{storeId:number}> = ({storeId}) => {
     bidId: bid.bidId,
     goodsName: bid.goodsName,
     bidPrice: bid.bidPrice.toLocaleString() + '원',
-    createDate: bid.createDate.substring(0, 10), 
+    createDate: bid.createDate.substring(0, 10),
     statusName: (
       <Typography fontWeight="bold" color={bid.statusName === '낙찰' ? 'success' : 'info'}>
         {bid.statusName}
@@ -42,23 +42,24 @@ const WinBidItem: React.FC<{storeId:number}> = ({storeId}) => {
   useEffect(() => {
     if (!storeId) return;
     api.get(`/store/${storeId}/win-bids`, {
-        currentPage
+      currentPage
     })
-        .then((res) => {
-            console.log(res);
-            setWinBidList(res.bidList);
-            setTotalPages(res.totalPages || 1);
-        })
-        .catch((err) => {
-            console.log("🔥 에러:", err);
-        });
-}, []);
+      .then((res) => {
+        console.log(res);
+        setWinBidList(res.bidList);
+        setTotalPages(res.totalPages || 1);
+      })
+      .catch((err) => {
+        console.log("🔥 에러:", err);
+      });
+  }, []);
 
   // 결제 모달 정보
-  const [buyerName, setBuyerName] = useState('홍길동');
-  const [phone, setPhone] = useState('010-1234-5678');
-  const [address, setAddress] = useState('서울시 강남구 테헤란로 123');
-  const [detailAddress, setDetailAddress] = useState('101동 202호');
+  const [buyerName, setBuyerName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [detailAddress, setDetailAddress] = useState('');
+  const [payPrice, setPayPrice] = useState(0);
   const payModalRef = useRef<ManageModalHandle>(null);
   const [selectedItem, setSelectedItem] = useState<bidItemProps | null>(null);
 
@@ -69,10 +70,6 @@ const WinBidItem: React.FC<{storeId:number}> = ({storeId}) => {
       console.error("window.IMP를 찾지 못했습니다. index.html을 확인하세요.");
     }
   }, []);
-
-  const handleAddressSearch = () => {
-    alert('api 연동 필요');
-  };
 
   const handlePay = () => {
     console.log('--- handlePay 함수 시작 ---');
@@ -148,6 +145,19 @@ const WinBidItem: React.FC<{storeId:number}> = ({storeId}) => {
     );
   };
 
+  const openAddressPopup = () => {
+    if (window.daum && window.daum.Postcode) {
+      new window.daum.Postcode({
+        oncomplete: function (data: any) {
+          const fullAddress = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+          setAddress(fullAddress);
+        }
+      }).open();
+    } else {
+      alert('주소 검색 서비스를 불러올 수 없습니다.');
+    }
+  };
+
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -171,6 +181,18 @@ const WinBidItem: React.FC<{storeId:number}> = ({storeId}) => {
         onRowClick={(row) => {
           const originalBidItem = winbidList.find(bid => bid.bidId === row.bidId);
           if (originalBidItem && originalBidItem.statusName === '낙찰') {
+            api.get('/payment/info', { bidId: originalBidItem.bidId })
+              .then((res) => {
+                setPayPrice(res.payPrice);
+                setBuyerName(res.receiver);
+                setPhone(res.phone);
+                setAddress(res.address);
+                setDetailAddress(res.addressDetail);
+              })
+              .catch((err) => {
+                console.log("🔥 에러:", err);
+              })
+
             setSelectedItem(originalBidItem); // 결제할 아이템 선택
             payModalRef.current?.openModal();
           } else {
@@ -189,7 +211,7 @@ const WinBidItem: React.FC<{storeId:number}> = ({storeId}) => {
         ref={payModalRef}
         title="결제"
         content={
-          <Payment
+          <BidPayment
             receiver={buyerName}
             setReceiver={setBuyerName}
             phone={phone}
@@ -198,7 +220,8 @@ const WinBidItem: React.FC<{storeId:number}> = ({storeId}) => {
             setAddress={setAddress}
             detailAddress={detailAddress}
             setDetailAddress={setDetailAddress}
-            handleAddressSearch={handleAddressSearch}
+            handleAddressSearch={openAddressPopup}
+            payPrice={payPrice}
           />
         }
         leftButtonContent="결제하기"

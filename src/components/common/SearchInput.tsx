@@ -8,6 +8,8 @@ interface SearchInputProps {
     placeholder: string;
     onSubmit: () => void;
     fontSize?: number;
+    value?: string;
+    setValue?: (value: string) => void;
 }
 
 /** 공통 SearchInput 컴포넌트
@@ -17,9 +19,12 @@ interface SearchInputProps {
  * @param placeholder placeholder 텍스트
  * @param onSubmit 버튼 클릭 or 엔터 이벤트 함수
  * @param fontSize 텍스트 박스 폰트 크기
+ * @param value 텍스트 박스 값
+ * @param setValue 텍스트 박스 값 변경 함수
  * @returns 
  */
-const SearchInput: React.FC<SearchInputProps> = ({ width, height, placeholder, onSubmit, fontSize = 16 }) => {
+const SearchInput: React.FC<SearchInputProps> = ({ width, height, placeholder, onSubmit, fontSize = 16, value, setValue }) => {
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault(); // 기존 이벤트 방지 (sumit 이벤트 방지)
         onSubmit();
@@ -30,6 +35,8 @@ const SearchInput: React.FC<SearchInputProps> = ({ width, height, placeholder, o
             <input
                 type="text"
                 placeholder={placeholder}
+                value={value}
+                onChange={(e) => setValue && setValue(e.target.value)}
                 style={{
                     width,
                     height,
