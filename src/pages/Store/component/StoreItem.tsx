@@ -4,43 +4,40 @@ import { Button, IconButton, Snackbar, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as faHeartSolid, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
-
-interface StoreProps {
-    id: number;
-    name: string;
-    src: string;
-    isFollowed:boolean;
-}
-
 interface StoreItemProps {
-    store: StoreProps;
+    storeId: number;
+    storeName: string;
+    profile: string;
+    follow:boolean;
+}
+interface StoreProps {
+    store: StoreItemProps;
     onClick: () => void;
     onFollow: () => void;
     onUnfollow: () => void;
 }
 
-const StoreItem: React.FC<StoreItemProps> = ({
+const StoreItem: React.FC<StoreProps> = ({
     store,
     onClick,
     onFollow,
     onUnfollow
 }) => {
-    const [isStoreFollowed, setIsStoreFollowed] = useState(store.isFollowed);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMsg, setSnackbarMsg] = useState('')
 
     const handleFollowClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (isStoreFollowed) {
-            setIsStoreFollowed(false);
+        if (store.follow) {
+            // setIsStoreFollowed(false);
             onUnfollow();
-            setSnackbarMsg(`${store.name}을(를) 팔로우 해제했습니다.`);
-            setOpenSnackbar(true);
+            // setSnackbarMsg(`${store.storeName}을(를) 팔로우 해제했습니다.`);
+            // setOpenSnackbar(true);
         } else {
-            setIsStoreFollowed(true);
+            // setIsStoreFollowed(true);
             onFollow();
-            setSnackbarMsg(`${store.name}을(를) 팔로우 했습니다.`);
-            setOpenSnackbar(true);
+            // setSnackbarMsg(`${store.storeName}을(를) 팔로우 했습니다.`);
+            // setOpenSnackbar(true);
         }
     };
 
@@ -74,15 +71,15 @@ const StoreItem: React.FC<StoreItemProps> = ({
             cursor:'pointer'
             }}
             onClick={onClick}>
-            <CustomAvatar size={100} src={store.src}></CustomAvatar>
+            <CustomAvatar size={100} src={store.profile}></CustomAvatar>
             <div style={{
                 marginLeft:'20px',
                 marginRight:'auto'
             }}>
-                <Typography>{store.name}</Typography>
+                <Typography>{store.storeName}</Typography>
             </div>
             <div style={{marginRight:'20px'}}>
-                {isStoreFollowed && 
+                {store.follow && 
                     <Button
                         type="button"
                         onClick={handleFollowClick}
@@ -96,7 +93,7 @@ const StoreItem: React.FC<StoreItemProps> = ({
                         }}>팔로잉
                     </Button> 
                 }
-                {!isStoreFollowed && 
+                {!store.follow && 
                     <Button
                         type="button"
                         onClick={handleFollowClick}

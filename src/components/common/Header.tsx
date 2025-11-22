@@ -262,7 +262,7 @@ const Header: React.FC<HeaderProps> = ({ isBasic = true, onSubmit }) => {
                             <span style={{ cursor: 'pointer' }} onClick={() => navigate(isAuth ? '/goodsform' : '/login')}>상품등록</span>
                         </div>
                         <div style={{ borderRight: '2px solid #141414', flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 14, fontWeight: 'bold' }}>
-                            <span style={{ cursor: 'pointer' }} onClick={() => navigate(isAuth ? '/storeDetail' : '/login')}>내 상점</span>
+                            <span style={{ cursor: 'pointer' }} onClick={() => navigate(isAuth ? '/myStore' : '/login')}>내 상점</span>
                         </div>
                         <div style={{ borderRight: '2px solid #141414', flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 18, color: '#141414' }}>
                             <FontAwesomeIcon icon={faBell} style={{ cursor: 'pointer' }} onClick={toggleDrawer(true)} />
