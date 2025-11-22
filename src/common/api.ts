@@ -1,5 +1,7 @@
 import axios, { AxiosRequestConfig, Method, AxiosHeaders } from "axios";
 import { logout } from "./utility";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -143,7 +145,7 @@ function sendForm<T>(
     url: string,
     data?: any,
     file?: File | File[],
-    dataKey?: string 
+    dataKey?: string
 ) {
     const form = new FormData();
 
@@ -180,3 +182,46 @@ function sendForm<T>(
         withCredentials: true,
     });
 }
+
+/**
+ * websoket + STOMP 설정
+ */
+interface CustomStompClient extends Client {
+    _alarmListener?: (body: any) => void;
+}
+
+const WEBSOCKET_API_URL = process.env.REACT_APP_WEBSOCKET_API_URL as string;
+
+export const createStompClient = () => {
+    const token = localStorage.getItem("token");
+    const socket = new SockJS(WEBSOCKET_API_URL);
+
+    const stompClient = new Client({
+        webSocketFactory: () => socket,
+        reconnectDelay: 5000,
+        connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
+    }) as CustomStompClient;
+
+    stompClient.onConnect = () => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const memberNo = payload.memberNo;
+
+        stompClient.subscribe(`/topic/alarm/${memberNo}`, (message: any) => {
+            const body = JSON.parse(message.body);
+            console.log("알람 수신:", body);
+
+            if (stompClient._alarmListener) {
+                stompClient._alarmListener(body);
+            }
+        });
+    };
+
+    if (token) stompClient.activate();
+
+    return stompClient;
+};
+
+export default createStompClient();

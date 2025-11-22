@@ -39,7 +39,7 @@ const MyPage: React.FC = () => {
             case 'AccountManage':
                 return <AccountManage setSelectedSetting={setSelectedSetting} />;
             case 'AccountEdit':
-                return <AccountEdit setSelectedSetting={setSelectedSetting}  />;
+                return <AccountEdit setSelectedSetting={setSelectedSetting} data={data}  />;
             case 'AlarmSetting':
                 return <AlarmSetting />;
             case 'BlockSetting':

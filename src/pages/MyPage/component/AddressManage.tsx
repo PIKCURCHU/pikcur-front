@@ -79,8 +79,6 @@ const AddressManage: React.FC<AddressManageProps> = ({ initStatus, setSelectedSe
     }
 
     const submitHandler = () => {
-        // api 함수
-
         setIsEditMode(false);
     }
 

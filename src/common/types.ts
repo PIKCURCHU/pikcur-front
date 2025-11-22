@@ -17,4 +17,10 @@ declare global {
   }
 }
 
+export interface AlarmMessageDto {
+  title: string;
+  content: string;
+  imagePath?: string | null;
+}
+
 export {};
