@@ -23,6 +23,8 @@ import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../../context/AuthContext';
 import PaginationButtons from '../../components/common/PaginationButtons';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
 interface StoreInfo {
     imagePath: string;
     storeName: string;
@@ -210,7 +212,8 @@ const GoodsDetail: React.FC = () => {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     minHeight: 0,
-                                    overflow: 'hidden'
+                                    overflow: 'hidden',
+                                    marginRight:'20px'
                                 }}
                             >
                                 <GoodsGallery
@@ -227,19 +230,19 @@ const GoodsDetail: React.FC = () => {
                                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 18, fontWeight: '700', color: '#141414' }}>
                                             <div>현재 입찰가</div>
-                                            <div style={{ color: '#FF5050 ' }}>{goods?.currentBidPrice}</div>
+                                            <div style={{ color: '#FF5050 ' }}>{goods?.currentBidPrice === null ? 0 : goods?.currentBidPrice.toLocaleString()}</div>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 18, color: '#141414' }}>
                                             <div>즉시 입찰가</div>
-                                            <div>{goods?.buyoutPrice}</div>
+                                            <div>{goods?.buyoutPrice.toLocaleString()}</div>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, color: '#141414' }}>
                                             <div>시작가</div>
-                                            <div>{goods?.startPrice}</div>
+                                            <div>{goods?.startPrice.toLocaleString()}</div>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, color: '#141414' }}>
                                             <div>배송비</div>
-                                            <div>{goods?.shippingPrice}</div>
+                                            <div>{goods?.shippingPrice.toLocaleString()}</div>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, color: '#141414' }}>
                                             <div>상품 상태</div>

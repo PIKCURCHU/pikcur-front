@@ -4,6 +4,8 @@ interface GoodsGalleryProps {
   images: string[];
 }
 
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
 const THUMB_SIZE = 88;
 const MAX_VISIBLE = 5;
 
@@ -120,7 +122,7 @@ export default function GoodsGallery({ images }: GoodsGalleryProps) {
                 aria-label={`이미지 ${realIndex + 1}`}
               >
                 <img
-                  src={src}
+                  src={API_BASE_URL + src}
                   alt={`thumb-${realIndex + 1}`}
                   style={{
                     width: '100%',
@@ -178,7 +180,7 @@ export default function GoodsGallery({ images }: GoodsGalleryProps) {
         position: 'relative',
       }}>
         <img
-          src={mainSrc}
+          src={API_BASE_URL + mainSrc}
           alt="main"
           style={{
             width: isPortrait ? 'auto' : '100%',

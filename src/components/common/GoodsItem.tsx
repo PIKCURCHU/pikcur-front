@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faUser, faClock, faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 interface GoodsItemProps {
     src: string;
     alt?: string;
@@ -93,7 +94,7 @@ const GoodsItem: React.FC<GoodsItemProps> = ({
                         component="img"
                         height={160}
                         width={160}
-                        image={src}
+                        image={API_BASE_URL + src}
                         alt={alt}
                         sx={{
                             borderRadius: '8px',
