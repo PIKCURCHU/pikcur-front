@@ -5,95 +5,7 @@ import PaginationButtons from '../../../components/common/PaginationButtons';
 import WinBidItem from './WinBidItem';
 import BidItem from './BidItem';
 
-interface bidItemProps {
-    id: number;
-    title: string;
-    bidPrice: number;
-    status: string;
-    createDate: string;
-    src: string;
-}
-
-const bidListExample: bidItemProps[] = [
-    {
-        id: 101,
-        title: '클래식 포르쉐 다이캐스트 모델',
-        bidPrice: 150000,
-        status: '입찰 성공 (낙찰)',
-        createDate: '2025-10-25T10:00:00',
-        src: 'https://example.com/auction/porsche_model.jpg'
-    },
-    {
-        id: 102,
-        title: '초기 발행 한정판 코믹스 #1',
-        bidPrice: 3200000,
-        status: '입찰 중',
-        createDate: '2025-10-27T14:30:00',
-        src: 'https://example.com/auction/comic_book.jpg'
-    },
-    {
-        id: 103,
-        title: '유명 화가 서명 액자',
-        bidPrice: 550000,
-        status: '입찰 실패 (패찰)',
-        createDate: '2025-10-20T21:45:00',
-        src: 'https://example.com/auction/signed_art.jpg'
-    },
-    {
-        id: 104,
-        title: '빈티지 레코드 플레이어',
-        bidPrice: 85000,
-        status: '입찰 중',
-        createDate: '2025-10-28T09:10:00',
-        src: 'https://example.com/auction/record_player.jpg'
-    },
-    {
-        id: 105,
-        title: '희귀 동전 묶음 (1970년대)',
-        bidPrice: 950000,
-        status: '입찰 성공 (낙찰)',
-        createDate: '2025-10-22T17:05:00',
-        src: 'https://example.com/auction/coins.jpg'
-    },
-    {
-        id: 106,
-        title: '디자인 한정판 스니커즈',
-        bidPrice: 400000,
-        status: '입찰 실패 (패찰)',
-        createDate: '2025-10-26T11:55:00',
-        src: 'https://example.com/auction/sneakers.jpg'
-    },
-    {
-        id: 107,
-        title: '역사적 인물 친필 편지',
-        bidPrice: 1800000,
-        status: '입찰 중',
-        createDate: '2025-10-28T16:30:00',
-        src: 'https://example.com/auction/old_letter.jpg'
-    }
-];
-
-const winBidListExample: bidItemProps[] = [
-    {
-        id: 101,
-        title: '클래식 포르쉐 다이캐스트 모델',
-        bidPrice: 150000,
-        status: '낙찰',
-        createDate: '2025-10-25T10:00:00',
-        src: 'https://example.com/auction/porsche_model.jpg'
-    },
-    {
-        id: 102,
-        title: '초기 발행 한정판 코믹스 #1',
-        bidPrice: 3200000,
-        status: '낙찰',
-        createDate: '2025-10-27T14:30:00',
-        src: 'https://example.com/auction/comic_book.jpg'
-    }
-]
-
-
-const BidList: React.FC<{}> = () => {
+const BidList: React.FC<{storeId:number}> = ({storeId}) => {
     const [selectedBidType, setSelectedBidType] = useState('bid'); 
 
     const handleChangeBidType = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,10 +26,10 @@ const BidList: React.FC<{}> = () => {
                 
             </RadioGroup> 
             {selectedBidType == 'bid' &&
-                <BidItem></BidItem>
+                <BidItem storeId={storeId}></BidItem>
             }
             {selectedBidType == 'winBid' &&
-                <WinBidItem></WinBidItem>
+                <WinBidItem storeId={storeId}></WinBidItem>
             }
         </div>
     );

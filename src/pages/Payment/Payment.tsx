@@ -12,6 +12,8 @@ interface PaymentProps {
     detailAddress: string;
     setDetailAddress: (v: string) => void;
     handleAddressSearch: () => void;
+    goodsName?: string;
+    payPrice?: number;
 }
 
 const Payment: React.FC<PaymentProps> = ({
@@ -19,12 +21,11 @@ const Payment: React.FC<PaymentProps> = ({
     phone, setPhone,
     address, setAddress,
     detailAddress, setDetailAddress,
-    handleAddressSearch
+    handleAddressSearch,
+    goodsName, payPrice
 }) => {
-        const productInfo = {
-            name: '나이키 에어맥스 97',
-            price: 189000
-        };
+
+    // useEffect로 로그인한 사용자의 메인주소정보 가져오기
 
         return (
             <div style={{
@@ -41,8 +42,8 @@ const Payment: React.FC<PaymentProps> = ({
                     fontSize: 15,
                     color: '#141414'
                 }}>
-                    <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 6 }}>{productInfo.name}</div>
-                    <div>상품 가격: <span style={{ fontWeight: 600 }}>{productInfo.price.toLocaleString()}원</span></div>
+                    <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 6 }}>{goodsName}</div>
+                    <div>상품 가격: <span style={{ fontWeight: 600 }}>{payPrice?.toLocaleString()}원</span></div>
                 </div>
                 <input
                     type="text"

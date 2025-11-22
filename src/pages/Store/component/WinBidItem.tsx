@@ -5,6 +5,7 @@ import { Typography } from '@mui/material';
 import CustomModal from '../../../components/common/CustomModal';
 import Payment from '../../Payment/Payment';
 import { ManageModalHandle } from '../../Auth/SignUp/component/TermsOfServiceModal';
+import { api } from '../../../common/api';
 
 declare global {
   interface Window {
@@ -13,52 +14,45 @@ declare global {
 }
 
 interface bidItemProps {
-  id: number;
-  title: string;
+  bidId: number;
+  goodsName: string;
   bidPrice: number;
-  status: string;
+  statusName: string;
   createDate: string;
-  src: string;
 }
 
-const winBidListExample: bidItemProps[] = [
-  {
-    id: 1,
-    title: '클래식 포르쉐 다이캐스트 모델',
-    bidPrice: 10,
-    status: '낙찰',
-    createDate: '2025-10-25T10:00:00',
-    src: 'https://example.com/auction/porsche_model.jpg'
-  },
-  {
-    id: 102,
-    title: '초기 발행 한정판 코믹스 #1',
-    bidPrice: 10,
-    status: '낙찰',
-    createDate: '2025-10-27T14:30:00',
-    src: 'https://example.com/auction/comic_book.jpg'
-  }
-];
 
-const WinBidItem: React.FC<{}> = () => {
-  const ITEMS_PER_PAGE = 6;
+const WinBidItem: React.FC<{storeId:number}> = ({storeId}) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(winBidListExample.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentWinBidList = winBidListExample.slice(startIndex, endIndex);
+  const [totalPages, setTotalPages] = useState(1);
+  const [winbidList, setWinBidList] = useState<bidItemProps[]>([]);
 
-  const formattedWinBidList = currentWinBidList.map((bid, index) => ({
-    id: bid.id,
-    title: bid.title,
+  const formattedWinBidList = winbidList.map((bid, index) => ({
+    bidId: bid.bidId,
+    goodsName: bid.goodsName,
     bidPrice: bid.bidPrice.toLocaleString() + '원',
-    createDate: bid.createDate,
-    status: (
-      <Typography fontWeight="bold">
-        {bid.status}
+    createDate: bid.createDate.substring(0, 10), 
+    statusName: (
+      <Typography fontWeight="bold" color={bid.statusName === '낙찰' ? 'success' : 'info'}>
+        {bid.statusName}
       </Typography>
     ),
   }));
+
+  useEffect(() => {
+    if (!storeId) return;
+    api.get(`/store/${storeId}/win-bids`, {
+        currentPage
+    })
+        .then((res) => {
+            console.log(res);
+            setWinBidList(res.bidList);
+            setTotalPages(res.totalPages || 1);
+        })
+        .catch((err) => {
+            console.log("🔥 에러:", err);
+        });
+}, []);
 
   // 결제 모달 정보
   const [buyerName, setBuyerName] = useState('홍길동');
@@ -89,7 +83,7 @@ const WinBidItem: React.FC<{}> = () => {
       return;
     }
 
-    console.log('선택된 상품:', selectedItem.title, selectedItem.bidPrice);
+    console.log('선택된 상품:', selectedItem.goodsName, selectedItem.bidPrice);
 
     const IMP = window.IMP;
     if (!IMP) {
@@ -105,7 +99,7 @@ const WinBidItem: React.FC<{}> = () => {
         pg: 'html5_inicis',
         pay_method: 'card',
         merchant_uid: `mid_${new Date().getTime()}`,
-        name: selectedItem.title,
+        name: selectedItem.goodsName,
         amount: selectedItem.bidPrice,
         buyer_name: buyerName,
         buyer_tel: phone,
@@ -128,7 +122,7 @@ const WinBidItem: React.FC<{}> = () => {
               impUid: rsp.imp_uid,
               merchantUid: rsp.merchant_uid,
               amount: selectedItem.bidPrice,
-              goodsId: selectedItem.id,
+              goodsId: selectedItem.bidId,
             }),
           })
             .then(res => {
@@ -167,20 +161,20 @@ const WinBidItem: React.FC<{}> = () => {
         width={'100%'}
         columns={
           [
-            { field: "title", headerName: "상품명" },
+            { field: "goodsName", headerName: "상품명" },
             { field: "bidPrice", headerName: "입찰가" },
-            { field: "status", headerName: "입찰 상태" },
+            { field: "statusName", headerName: "입찰 상태" },
             { field: "createDate", headerName: "날짜" }
           ]
         }
         dataList={formattedWinBidList}
         onRowClick={(row) => {
-          const originalBidItem = winBidListExample.find(bid => bid.id === row.id);
-          if (originalBidItem && originalBidItem.status === '낙찰') {
+          const originalBidItem = winbidList.find(bid => bid.bidId === row.bidId);
+          if (originalBidItem && originalBidItem.statusName === '낙찰') {
             setSelectedItem(originalBidItem); // 결제할 아이템 선택
             payModalRef.current?.openModal();
           } else {
-            console.log("입찰 성공 상태가 아니므로 결제 모달을 열지 않습니다. 상태:", originalBidItem?.status);
+            console.log("입찰 성공 상태가 아니므로 결제 모달을 열지 않습니다. 상태:", originalBidItem?.statusName);
           }
         }}
       />

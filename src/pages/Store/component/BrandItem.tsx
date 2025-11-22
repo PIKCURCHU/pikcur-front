@@ -5,42 +5,41 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as faHeartSolid, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 
-interface BrandProps {
-    id: number;
-    name: string;
-    src: string;
-    isLiked:boolean;
+interface BrandItemProps {
+    brandId: number;
+    brandName: string;
+    brandProfile: string;
+    liked:boolean;
 }
 
-interface BrandItemProps {
-    brand: BrandProps;
+interface BrandProps {
+    brand: BrandItemProps;
     onClick: () => void;
     onLike: () => void;
     onUnlike: () => void;
 }
 
-const BrandItem: React.FC<BrandItemProps> = ({
+const BrandItem: React.FC<BrandProps> = ({
     brand,
     onClick,
     onLike,
     onUnlike
 }) => {
-    const [isBrandLike, setIsBrandLike] = useState(brand.isLiked);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMsg, setSnackbarMsg] = useState('')
 
     const handleHeartClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (isBrandLike) {
-            setIsBrandLike(false);
+        if (brand.liked) {
+            // setIsBrandLike(false);
             onUnlike();
-            setSnackbarMsg(`${brand.name}을(를) 찜 해제했습니다.`);
-            setOpenSnackbar(true);
+            // setSnackbarMsg(`${brand.brandName}을(를) 찜 해제했습니다.`);
+            // setOpenSnackbar(true);
         } else {
-            setIsBrandLike(true);
+            // setIsBrandLike(true);
             onLike();
-            setSnackbarMsg(`${brand.name}을(를) 찜 했습니다.`);
-            setOpenSnackbar(true);
+            // setSnackbarMsg(`${brand.brandName}을(를) 찜 했습니다.`);
+            // setOpenSnackbar(true);
         }
     };
 
@@ -74,17 +73,17 @@ const BrandItem: React.FC<BrandItemProps> = ({
             cursor:'pointer'
             }}
             onClick={onClick}>
-            <CustomAvatar size={100} src={brand.src}></CustomAvatar>
+            <CustomAvatar size={100} src={brand.brandProfile}></CustomAvatar>
             <div style={{
                 marginLeft:'20px',
                 marginRight:'auto'
             }}>
-                <Typography>{brand.name}</Typography>
+                <Typography>{brand.brandName}</Typography>
             </div>
             <div style={{marginRight:'20px'}}>
             <FontAwesomeIcon
                 onClick={handleHeartClick}
-                icon={isBrandLike ? faHeartSolid : faHeartRegular}
+                icon={brand.liked ? faHeartSolid : faHeartRegular}
                 style={{
                     width: 26,
                     height: 26,

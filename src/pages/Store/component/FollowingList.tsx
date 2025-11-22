@@ -1,75 +1,95 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomAvatar from '../../../components/common/CustomAvatar';
 import { Button, Typography } from '@mui/material';
 import PaginationButtons from '../../../components/common/PaginationButtons';
 import StoreItem from './StoreItem';
+import { api } from '../../../common/api';
+import { useAuth } from '../../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface StoreItemProps {
-    id: number;
-    name: string;
-    src: string;
-    isFollowed:boolean;
+    storeId: number;
+    storeName: string;
+    profile: string;
+    follow:boolean;
 }
 
-const storeItemListExample: StoreItemProps[] = [
-    {
-        id: 301,
-        name: '럭셔리 빈티지 부티크',
-        src: 'https://example.com/stores/store_luxury.jpg',
-        isFollowed: true
-    },
-    {
-        id: 302,
-        name: '테크 & 가젯 전문점',
-        src: 'https://example.com/stores/store_tech.jpg',
-        isFollowed: true
-    },
-    {
-        id: 303,
-        name: '수공예 주얼리 공방',
-        src: 'https://example.com/stores/store_jewelry.jpg',
-        isFollowed: true
-    },
-    {
-        id: 304,
-        name: '레트로 게임 컬렉션',
-        src: 'https://example.com/stores/store_retro.jpg',
-        isFollowed: true
-    },
-    {
-        id: 305,
-        name: '친환경 리빙 셀렉샵',
-        src: 'https://example.com/stores/store_eco.jpg',
-        isFollowed: true
-    }
-];
-
-
-const FollowingList: React.FC<{}> = () => {
-    const ITEMS_PER_PAGE = 5;
+const FollowingList: React.FC<{storeId: number}> = ({storeId}) => {
+    const { isAuth } = useAuth();
+    const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = Math.ceil(storeItemListExample.length / ITEMS_PER_PAGE);
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
- 
-    const currentStoreList = storeItemListExample.slice(startIndex, endIndex);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const [followList, setFollowList] = useState<StoreItemProps[]>([]);
+
+    useEffect(()=> {
+            api.get(`/store/${storeId}/follows`, {currentPage})
+            .then((res) => {
+                console.log(res);
+                setFollowList(res.followList);
+                setTotalPages(res.totalPages || 0);
+            })
+            .catch((err) => {
+                console.log("🔥 에러:", err);
+            });
+    },[])
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setCurrentPage(value);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
+
+    const handlerStoreSelect = (storeId: number) => {
+        navigate("/storeDetail", {state:{storeId}});
+    };
+
+    const updateFollowState = (targetId: number, status: boolean) => {
+        setFollowList((prevList) =>
+            prevList.map((item) =>
+                item.storeId === targetId
+                    ? { ...item, follow: status }
+                    : item
+            )
+        );
+    };
+    
+    const handlerFollow = (storeId: number) => {
+        if(isAuth) {
+            api.post(`/store/follow/${storeId}`)
+            .then(() => {
+                updateFollowState(storeId, true);
+            })
+            .catch((err) => console.log("🔥 에러:", err));
+        } else {
+            alert("로그인이 필요합니다.");
+        }
+        
+    };
+    
+    const handlerUnFollow = (storeId: number) => {
+        if(isAuth) {
+            api.delete(`/store/follow/${storeId}`)
+            .then(() => {
+                updateFollowState(storeId, false);
+            })
+            .catch((err) => console.log("🔥 에러:", err));
+        } else {
+            alert("로그인이 필요합니다.");
+        }
+    };
+
     return (
         <div>
             <div style={{
                 marginTop:'20px',display:'flex', flexDirection: 'column', gap:"20px"
             }}>
-            {currentStoreList.map((store, index)=>{
+            {followList.map((store, index)=>{
                 return (
                     <StoreItem
                         store={store}
-                        onClick={()=>{console.log("상점 페이지 이동")}}
-                        onFollow={()=>{console.log("팔로우로직 수행")}}
-                        onUnfollow={()=>{console.log("언팔로우로직수행")}}></StoreItem>
+                        onClick={()=>{handlerStoreSelect(store.storeId)}}
+                        onFollow={()=>{handlerFollow(store.storeId)}}
+                        onUnfollow={()=>{handlerUnFollow(store.storeId)}}></StoreItem>
                 );
             })}
             
