@@ -1,143 +1,142 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import WithCategoryLayout from "../../components/layout/WithCategoryLayout";
 import GoodsItem from "../../components/common/GoodsItem";
 import { Typography } from "@mui/material";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { api } from "../../common/api";
+import mainImg from '../../assets/images/mainimg.jpg'
+
 
 interface GoodsItemProps {
-    src: string;
-    alt?: string;
+    imagePath: string;
+    goodsId: number;
+    categoryId: number;
+    brandId: number;
     goodsName: string;
-    bidPrice: number;
-    buyOutPrice: number;
-    peopleCount: number;
+    buyoutPrice: number;
+    startPrice: number;
     auctionEndDate: string;
-    onClick: () => void;
-    like: boolean;
-    onLike: () => void;
-    onUnlike: () => void;
+    createDate: string;
+    bidPrice: number;
+    bidCount: number;
+    liked: boolean;
+    gender: 'M' | 'F';
+    statusNo: string;
 }
 
 
-const goodsListExample: GoodsItemProps[] = [
-    {
-        src: 'https://example.com/images/goods_1.jpg',
-        alt: '한정판 디자이너 시계',
-        goodsName: '한정판 디자이너 시계 A-100 (새제품)',
-        bidPrice: 550000,
-        buyOutPrice: 800000,
-        peopleCount: 15,
-        auctionEndDate: '2025-11-01T14:30:00', // 11월 1일 14시 30분
-        onClick: ()=>{},
-        like: true, // 찜 상태
-        onLike: ()=>{},
-        onUnlike: ()=>{},
-    },
-    {
-        src: 'https://example.com/images/goods_2.jpg',
-        alt: '빈티지 카메라',
-        goodsName: '빈티지 필름 카메라 K-7000 (상태 A급)',
-        bidPrice: 120000,
-        buyOutPrice: 200000,
-        peopleCount: 8,
-        auctionEndDate: '2025-10-27T10:00:00', // 10월 27일 10시 00분
-        onClick: ()=>{},
-        like: false, // 찜 안함
-        onLike: ()=>{},
-        onUnlike: ()=>{},
-    },
-    {
-        src: 'https://example.com/images/goods_3.jpg',
-        alt: '최신형 무선 이어폰',
-        goodsName: '최신형 노이즈 캔슬링 무선 이어폰 Pro-Max',
-        bidPrice: 280000,
-        buyOutPrice: 350000,
-        peopleCount: 42,
-        auctionEndDate: '2025-11-05T20:00:00', // 11월 5일 20시 00분
-        onClick: ()=>{},
-        like: true, // 찜 상태
-        onLike: ()=>{},
-        onUnlike: ()=>{},
-    },
-    {
-        src: 'https://example.com/images/goods_4.jpg',
-        alt: '고급 가죽 지갑',
-        goodsName: '고급 이탈리아산 가죽 지갑 (미사용)',
-        bidPrice: 70000,
-        buyOutPrice: 100000,
-        peopleCount: 3,
-        auctionEndDate: '2025-10-26T23:59:59', // 오늘 자정 직전
-        onClick: ()=>{},
-        like: false, // 찜 안함
-        onLike: ()=>{},
-        onUnlike: ()=>{},
-    },
-    {
-        src: 'https://example.com/images/goods_5.jpg',
-        alt: '인기 게임 콘솔',
-        goodsName: '차세대 인기 게임 콘솔 (사용감 적음)',
-        bidPrice: 450000,
-        buyOutPrice: 500000,
-        peopleCount: 20,
-        auctionEndDate: '2025-11-10T18:00:00', // 11월 10일 18시 00분
-        onClick: ()=>{},
-        like: true, // 찜 상태
-        onLike: ()=>{},
-        onUnlike: ()=>{},
-    },
-    {
-        src: 'https://example.com/images/goods_1.jpg',
-        alt: '한정판 디자이너 시계',
-        goodsName: '한정판 디자이너 시계 A-100 (새제품)',
-        bidPrice: 550000,
-        buyOutPrice: 800000,
-        peopleCount: 15,
-        auctionEndDate: '2025-11-01T14:30:00', // 11월 1일 14시 30분
-        onClick: ()=>{},
-        like: true, // 찜 상태
-        onLike: ()=>{},
-        onUnlike: ()=>{},
-    },
-    {
-        src: 'https://example.com/images/goods_2.jpg',
-        alt: '빈티지 카메라',
-        goodsName: '빈티지 필름 카메라 K-7000 (상태 A급)',
-        bidPrice: 120000,
-        buyOutPrice: 200000,
-        peopleCount: 8,
-        auctionEndDate: '2025-10-27T10:00:00', // 10월 27일 10시 00분
-        onClick: ()=>{},
-        like: false, // 찜 안함
-        onLike: ()=>{},
-        onUnlike: ()=>{},
-    },
-    {
-        src: 'https://example.com/images/goods_3.jpg',
-        alt: '최신형 무선 이어폰',
-        goodsName: '최신형 노이즈 캔슬링 무선 이어폰 Pro-Max',
-        bidPrice: 280000,
-        buyOutPrice: 350000,
-        peopleCount: 42,
-        auctionEndDate: '2025-11-05T20:00:00', // 11월 5일 20시 00분
-        onClick: ()=>{},
-        like: true, // 찜 상태
-        onLike: ()=>{},
-        onUnlike: ()=>{},
-    },
-];
-
-
 const MainPage: React.FC<{}> = ({}) => {
+    const { isAuth } = useAuth();
+    const navigate = useNavigate();
+
+    const [recentViewGoodsList, setRecentViewGoodsList] = useState<GoodsItemProps[]>([]);
+    const [popularGoodsList, setPopularGoodsList] = useState<GoodsItemProps[]>([]);
+    const [auctionEndAscGoodsList, setAuctionEndAscGoodsList] = useState<GoodsItemProps[]>([]);
+
+    const fetchGoods = () => {
+        api.get(`/goods/recent`)
+            .then((res) => {
+                setRecentViewGoodsList(res);
+            })
+            .catch((err) => {
+                console.log("최근 본 상품 에러:", err);
+                setRecentViewGoodsList([]);
+            });
+
+        api.get(`/goods/popular`)
+            .then((res) => {
+                setPopularGoodsList(res);
+            })
+            .catch((err) => {
+                console.log("인기 상품 에러:", err);
+                setPopularGoodsList([]);
+            });
+
+        api.get(`/goods/closing-soon`)
+            .then((res) => {
+                setAuctionEndAscGoodsList(res); 
+            })
+            .catch((err) => {
+                console.log("경매 임박 상품 에러:", err);
+                setAuctionEndAscGoodsList([]);
+            });
+    };
+    
+    useEffect(() => {
+        fetchGoods();
+    }, []);
+
+    const formatDate = (dateStr: string) => {
+        if (!dateStr) return "";
+        const date = new Date(dateStr);
+        
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}`; 
+    };
+
+    const handlerGoodsSelect = (goodsId: number) => {
+        console.log(goodsId);
+        navigate("/goodsDetail", {state:{goodsId}});
+    };
+
+    const updateList = (prevList: GoodsItemProps[], targetId: number, status: boolean): GoodsItemProps[] => {
+        return prevList.map((item) =>
+            item.goodsId === targetId
+                ? { ...item, liked: status }
+                : item
+        );
+    };
+
+    const updateLikeState = (targetId: number, status: boolean) => {
+        setRecentViewGoodsList((prevList) => updateList(prevList, targetId, status));
+        setPopularGoodsList((prevList) => updateList(prevList, targetId, status));
+        setAuctionEndAscGoodsList((prevList) => updateList(prevList, targetId, status));
+    };
+    
+    const handlerLike = (goodsId: number) => {
+        if(isAuth) {
+            api.post(`/goods/like/${goodsId}`)
+            .then(() => {
+                updateLikeState(goodsId, true); 
+            })
+            .catch((err) => console.log("🔥 좋아요 에러:", err));
+        } else {
+            alert("로그인이 필요합니다.");
+        }
+        
+    };
+    
+    const handlerUnlike = (goodsId: number) => {
+        if(isAuth) {
+            api.delete(`/goods/like/${goodsId}`)
+            .then(() => {
+                updateLikeState(goodsId, false); 
+            })
+            .catch((err) => console.log("🔥 싫어요 에러:", err));
+        } else {
+            alert("로그인이 필요합니다.");
+        }
+    };
+
+
     return (
         <WithCategoryLayout
             topContent={
-            <div style={{
+            <div 
+            style={{
                 width:'100%',
                 height:'180px',
-                backgroundColor:'purple',
                 marginTop:'60px',
                 borderRadius:'8px'
             }}>
-                메인이미지
+                <img src={mainImg} alt="메인이미지" style={{
+                    width:'100%',
+                    height:'180px',
+                    borderRadius:'8px'}}/>
             </div>
         }
             middleBottomContent={
@@ -145,96 +144,92 @@ const MainPage: React.FC<{}> = ({}) => {
                 display:'flex',
                 flexDirection: 'column',
             }}>
-                <div style={{
-                    marginTop:'40px'
-                }}>
+                {/* 최근 본 상품 */}
+                <div style={{ marginTop:'40px' }}>
                     <Typography variant="body1" fontWeight="bold" sx={{ mb: 3, fontSize:'22px' }}>최근 본 상품</Typography>
                     <div style={{
                         display:'flex',
                         gap:'25px',
                         flexWrap: 'wrap'
                     }}>
-                    {goodsListExample.map((item, index)=>{
+                    {recentViewGoodsList.map((item, index)=>{
                         return (
                             <GoodsItem 
-                                src={item.src}
-                                alt={item.alt}
+                                key={item.goodsId}
+                                src={item.imagePath}
                                 goodsName={item.goodsName}
-                                bidPrice={item.bidPrice}
-                                buyOutPrice={item.buyOutPrice}
-                                peopleCount={item.peopleCount}
-                                auctionEndDate={item.auctionEndDate}
-                                onClick={item.onClick}
-                                like={item.like}
-                                onLike={item.onLike}
-                                onUnlike={item.onUnlike}
+                                bidPrice={item.bidPrice ?? 0}
+                                buyOutPrice={item.buyoutPrice}
+                                peopleCount={item.bidCount}
+                                auctionEndDate={formatDate(item.auctionEndDate)}
+                                onClick={() => { handlerGoodsSelect(item.goodsId) }}
+                                like={item.liked}
+                                onLike={()=>{handlerLike(item.goodsId)}}
+                                onUnlike={()=>{handlerUnlike(item.goodsId)}}
                             ></GoodsItem>
                         );
                     })}
                     </div>
                 </div>
-                <div style={{
-                    marginTop:'40px'
-                }}>
+                
+                {/* 인기 상품 */}
+                <div style={{ marginTop:'40px' }}>
                     <Typography variant="body1" fontWeight="bold" sx={{ mb: 3, fontSize:'22px' }}>인기 상품</Typography>
                     <div style={{
                         display:'flex',
                         gap:'25px',
                         flexWrap: 'wrap'
                     }}>
-                    {goodsListExample.map((item, index)=>{
+                    {popularGoodsList.map((item, index)=>{
                         return (
                             <GoodsItem 
-                                src={item.src}
-                                alt={item.alt}
+                                key={item.goodsId}
+                                src={item.imagePath}
                                 goodsName={item.goodsName}
-                                bidPrice={item.bidPrice}
-                                buyOutPrice={item.buyOutPrice}
-                                peopleCount={item.peopleCount}
-                                auctionEndDate={item.auctionEndDate}
-                                onClick={item.onClick}
-                                like={item.like}
-                                onLike={item.onLike}
-                                onUnlike={item.onUnlike}
+                                bidPrice={item.bidPrice ?? 0}
+                                buyOutPrice={item.buyoutPrice}
+                                peopleCount={item.bidCount}
+                                auctionEndDate={formatDate(item.auctionEndDate)}
+                                onClick={() => { handlerGoodsSelect(item.goodsId) }}
+                                like={item.liked}
+                                onLike={()=>{handlerLike(item.goodsId)}}
+                                onUnlike={()=>{handlerUnlike(item.goodsId)}}
                             ></GoodsItem>
                         );
                     })}
                     </div>
                 </div>
-                <div style={{
-                    marginTop:'40px'
-                }}>
+                
+                {/* 경매 종료 임박 상품 */}
+                <div style={{ marginTop:'40px' }}>
                     <Typography variant="body1" fontWeight="bold" sx={{ mb: 3, fontSize:'22px' }}>경매 종료 임박 상품</Typography>
                     <div style={{
                         display:'flex',
                         gap:'25px',
                         flexWrap: 'wrap'
                     }}>
-                    {goodsListExample.map((item, index)=>{
+                    {auctionEndAscGoodsList.map((item, index)=>{
                         return (
                             <GoodsItem 
-                                src={item.src}
-                                alt={item.alt}
+                                key={item.goodsId}
+                                src={item.imagePath}
                                 goodsName={item.goodsName}
-                                bidPrice={item.bidPrice}
-                                buyOutPrice={item.buyOutPrice}
-                                peopleCount={item.peopleCount}
-                                auctionEndDate={item.auctionEndDate}
-                                onClick={item.onClick}
-                                like={item.like}
-                                onLike={item.onLike}
-                                onUnlike={item.onUnlike}
+                                bidPrice={item.bidPrice ?? 0}
+                                buyOutPrice={item.buyoutPrice}
+                                peopleCount={item.bidCount}
+                                auctionEndDate={formatDate(item.auctionEndDate)}
+                                onClick={() => { handlerGoodsSelect(item.goodsId) }}
+                                like={item.liked}
+                                onLike={()=>{handlerLike(item.goodsId)}}
+                                onUnlike={()=>{handlerUnlike(item.goodsId)}}
                             ></GoodsItem>
                         );
                     })}
                     </div>
-                </div>   
-                
-                     
-                
+                </div>   
             </div>
         }
-        ></WithCategoryLayout>
+        />
     );
 }
 

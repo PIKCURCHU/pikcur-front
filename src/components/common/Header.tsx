@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import CustomModal from './CustomModal';
 import { stompClient,  api } from '../../common/api';
-
 interface HeaderProps {
     isBasic?: boolean;
     onSubmit?: () => void;

@@ -9,6 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { api } from '../../common/api';
 import PaginationButtons from '../../components/common/PaginationButtons';
 
+
 interface SearchGoodsListProps {
 
 }

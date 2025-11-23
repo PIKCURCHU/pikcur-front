@@ -24,6 +24,7 @@ import AnswerForm from './pages/Contact/1by1QnA/AnswerForm';
 import TermsOfService from './pages/Auth/SignUp/TermsOfService';
 import SignUpSuccess from './pages/Auth/SignUp/SignUpSuccess';
 import MyPage from './pages/MyPage/MyPage';
+import CategoryGoodsList from './pages/Goods/CategoryGoodsList';
 import SearchPage from './pages/Main/SearchPage';
 import SearchGoodsList from './pages/Main/SearchGoodsList';
 
@@ -47,6 +48,7 @@ function App() {
                     <Route path="answerForm" element={<AnswerForm />} />
                     <Route path="storeDetail" element={<StoreDetail />} />
                     <Route path="myStore" element={<MyStoreDetail />} />
+                    <Route path="categories/:categoryId" element={<CategoryGoodsList />} />
 
                     {/* Auth Routes */}
                     <Route path="login" element={<SignIn />} />

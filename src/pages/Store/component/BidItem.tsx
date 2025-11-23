@@ -7,12 +7,19 @@ import CustomModal from '../../../components/common/CustomModal';
 import BidPayment from '../../Payment/BidPayment';
 import { api } from '../../../common/api';
 
+declare global {
+    interface Window {
+      IMP?: any;
+    }
+  }
+
 interface bidItemProps {
     bidId: number;
     goodsName: string;
     bidPrice: number;
     statusName: string;
     createDate: string;
+    goodsId: number;
 }
 
 const BidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
@@ -21,6 +28,7 @@ const BidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
     const [totalPages, setTotalPages] = useState(1);
 
     const formattedBidList = bidList.map((bid, index) => ({
+        goodsId:bid.goodsId,
         bidId: bid.bidId,
         goodsName: bid.goodsName,
         bidPrice: bid.bidPrice.toLocaleString() + '원',
@@ -34,21 +42,91 @@ const BidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
 
 
     // 결제 모달 정보
-    const [payPrice, setPayPrice] = useState<number>(0);
-    const [receiver, setReceiver] = useState('');
+    const [buyerName, setBuyerName] = useState('');
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
     const [detailAddress, setDetailAddress] = useState('');
+    const [payPrice, setPayPrice] = useState(0);
     const payModalRef = useRef<ManageModalHandle>(null);
+    const [selectedItem, setSelectedItem] = useState<bidItemProps | null>(null);
 
     const handleAddressSearch = () => {
         alert('api 연동 필요');
     };
 
-    const handlePay = () => {
-        alert('결제가 완료되었습니다.');
-        payModalRef.current?.closeModal();
-    };
+    useEffect(() => {
+        if (window.IMP) {
+          window.IMP.init('imp57185518'); // ⚠️ 가맹점 식별코드
+        } else {
+          console.error("window.IMP를 찾지 못했습니다. index.html을 확인하세요.");
+        }
+      }, []);
+    
+      const handlePay = () => {
+        console.log('--- handlePay 함수 시작 ---');
+    
+        if (!selectedItem) {
+          console.error('❌ 결제 중단: selectedItem이 null입니다.');
+          alert('결제할 상품이 선택되지 않았습니다.');
+          return;
+        }
+    
+        console.log('선택된 상품:', selectedItem.goodsName, selectedItem.bidPrice);
+    
+        const IMP = window.IMP;
+        if (!IMP) {
+          console.error('❌ 결제 중단: 아임포트(IMP) 로드 실패');
+          alert('아임포트 로드 실패');
+          return;
+        }
+    
+        console.log('아임포트에 결제 요청을 보냅니다...');
+    
+        IMP.request_pay(
+          {
+            pg: 'html5_inicis',
+            pay_method: 'card',
+            merchant_uid: `mid_${new Date().getTime()}`,
+            name: selectedItem.goodsName,
+            amount: payPrice,
+            buyer_name: buyerName,
+            buyer_tel: phone,
+            buyer_addr: `${address} ${detailAddress}`,
+          },
+          (rsp: any) => {
+            if (rsp.success) {
+              console.log('✅ 아임포트 결제 성공!', rsp);
+              alert('✅ 결제가 완료되었습니다.\n결제번호: ' + rsp.imp_uid);
+              payModalRef.current?.closeModal();
+    
+              console.log('이제 백엔드로 fetch 요청을 보냅니다...');
+    
+              api.post(`/payment/verify`, {
+                impUid: rsp.imp_uid,
+                merchantUid: rsp.merchant_uid,
+                amount: payPrice,
+                goodsId: selectedItem.goodsId,
+              })
+              .then((res) => {
+                  console.log("서버 응답:", res);
+              
+                  if (res.status !== "success") {
+                      throw new Error('결제 검증 실패');
+                  }
+              
+                  alert(res.message);
+              })
+              .catch((err) => {
+                  console.error('axios .catch 에러:', err);
+                  alert(err.message);
+              });
+            } else {
+              console.error('❌ 아임포트 결제 실패!', rsp);
+              alert('❌ 결제가 실패하였습니다: ' + rsp.error_msg);
+            }
+          }
+        );
+      };
 
     const openAddressPopup = () => {
         if (window.daum && window.daum.Postcode) {
@@ -105,7 +183,7 @@ const BidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
                         api.get('/payment/info', { bidId: originalBidItem.bidId })
                             .then((res) => {
                                 setPayPrice(res.payPrice);
-                                setReceiver(res.receiver);
+                                setBuyerName(res.receiver);
                                 setPhone(res.phone);
                                 setAddress(res.address);
                                 setDetailAddress(res.addressDetail);
@@ -113,7 +191,7 @@ const BidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
                             .catch((err) => {
                                 console.log("🔥 에러:", err);
                             })
-
+                        setSelectedItem(originalBidItem); 
                         payModalRef.current?.openModal();
                     } else {
                         console.log("입찰 성공 상태가 아니므로 결제 모달을 열지 않습니다. 상태:", originalBidItem?.statusName);
@@ -128,8 +206,8 @@ const BidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
                 title="결제"
                 content={
                     <BidPayment
-                        receiver={receiver}
-                        setReceiver={setReceiver}
+                        receiver={buyerName}
+                        setReceiver={setBuyerName}
                         phone={phone}
                         setPhone={setPhone}
                         address={address}
