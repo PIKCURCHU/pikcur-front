@@ -9,19 +9,15 @@ import ReviewSummary from '../../components/common/ReviewSummary';
 import CustomTable from '../../components/common/CustomTable';
 import CustomModal from '../../components/common/CustomModal';
 import {
-  faFlag,
-  faTriangleExclamation,
-  faCircleExclamation,
-  faShieldHalved,
   faBan, faHeart as faHeartSolid
 } from '@fortawesome/free-solid-svg-icons';
 import { ManageModalHandle } from '../Auth/SignUp/component/TermsOfServiceModal';
-import Payment from '../Payment/BidPayment';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../common/api';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../../context/AuthContext';
 import PaginationButtons from '../../components/common/PaginationButtons';
+import BuyoutPayment from '../Payment/BuyoutPayment';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -67,6 +63,9 @@ interface QuestionItem {
  * 상품 상세 페이지
  */
 const GoodsDetail: React.FC = () => {
+    // const params = useParams<{ goodsId: string }>();
+    // const goodsId = Number(params.goodsId);
+
     const { isAuth } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
@@ -78,20 +77,79 @@ const GoodsDetail: React.FC = () => {
     const [totalPages, setTotalPages] = useState(1);
 
     // 즉시결제 모달 정보
-    const [receiver, setReceiver] = useState('홍길동');
-    const [phone, setPhone] = useState('010-1234-5678');
-    const [address, setAddress] = useState('서울시 강남구 테헤란로 123');
-    const [detailAddress, setDetailAddress] = useState('101동 202호');
+    const [buyerName, setBuyerName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [address, setAddress] = useState('');
+    const [detailAddress, setDetailAddress] = useState('');
+    const [payPrice, setPayPrice] = useState(0);
     const payModalRef = useRef<ManageModalHandle>(null);
 
-    const handleAddressSearch = () => {
-        alert('api 연동 필요');
-    };
+    useEffect(() => {
+        if (window.IMP) {
+          window.IMP.init('imp57185518'); // ⚠️ 가맹점 식별코드
+        } else {
+          console.error("window.IMP를 찾지 못했습니다. index.html을 확인하세요.");
+        }
+      }, []);
 
     const handlePay = () => {
-        alert('결제가 완료되었습니다.');
-        payModalRef.current?.closeModal();
-    };
+        console.log('--- handlePay 함수 시작 ---');
+    
+        const IMP = window.IMP;
+        if (!IMP) {
+          console.error('❌ 결제 중단: 아임포트(IMP) 로드 실패');
+          alert('아임포트 로드 실패');
+          return;
+        }
+    
+        console.log('아임포트에 결제 요청을 보냅니다...');
+    
+        IMP.request_pay(
+          {
+            pg: 'html5_inicis',
+            pay_method: 'card',
+            merchant_uid: `mid_${new Date().getTime()}`,
+            name: goods?.goodsName,
+            amount: payPrice,
+            buyer_name: buyerName,
+            buyer_tel: phone,
+            buyer_addr: `${address} ${detailAddress}`,
+          },
+          (rsp: any) => {
+            if (rsp.success) {
+              console.log('✅ 아임포트 결제 성공!', rsp);
+              alert('✅ 결제가 완료되었습니다.\n결제번호: ' + rsp.imp_uid);
+              payModalRef.current?.closeModal();
+    
+              console.log('이제 백엔드로 fetch 요청을 보냅니다...');
+
+              api.post(`/payment/verify`, {
+                impUid: rsp.imp_uid,
+                merchantUid: rsp.merchant_uid,
+                amount: payPrice,
+                goodsId: goods?.goodsId,
+              })
+              .then((res) => {
+                  console.log("서버 응답:", res);
+              
+                  if (res.status !== "success") {
+                      throw new Error('결제 검증 실패');
+                  }
+              
+                  alert(res.message);
+              })
+              .catch((err) => {
+                  console.error('axios .catch 에러:', err);
+                  alert(err.message);
+              });
+              
+            } else {
+              console.error('❌ 아임포트 결제 실패!', rsp);
+              alert('❌ 결제가 실패하였습니다: ' + rsp.error_msg);
+            }
+          }
+        );
+      };
 
     const handleGoodsReport = () => {
         if (location.state.goodsId) {
@@ -116,6 +174,19 @@ const GoodsDetail: React.FC = () => {
         </Typography>
         ),
     }));
+
+    const openAddressPopup = () => {
+        if (window.daum && window.daum.Postcode) {
+          new window.daum.Postcode({
+            oncomplete: function (data: any) {
+              const fullAddress = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+              setAddress(fullAddress);
+            }
+          }).open();
+        } else {
+          alert('주소 검색 서비스를 불러올 수 없습니다.');
+        }
+      };
 
     useEffect(() => {
         if (location.state.goodsId) {
@@ -303,7 +374,24 @@ const GoodsDetail: React.FC = () => {
                                         <Button style={{ backgroundColor: '#141414', height: 40, width: 120, color: '#FFFFFF' }} onClick={()=>handleBidPage(goods?.goodsId || 0)}>입찰</Button>
                                         <Button
                                             style={{ backgroundColor: '#F2F2F2', height: 40, width: 120, color: '#141414', border: '1px solid #D9D9D9' }}
-                                            onClick={() => payModalRef.current?.openModal()}
+                                            onClick={() => {
+
+                                                const goodsId = goods?.goodsId;
+                                                api.get(`/payment/buyout/${goodsId}`)
+                                                    .then((res) => {
+                                                        console.log(res);
+                                                        setPayPrice(res.payPrice);
+                                                        setBuyerName(res.receiver);
+                                                        setPhone(res.phone);
+                                                        setAddress(res.address);
+                                                        setDetailAddress(res.addressDetail);
+                                                    })
+                                                    .catch((err) => {
+                                                        console.log("🔥 에러:", err);
+                                                    })
+
+                                                payModalRef.current?.openModal()
+                                            }}
                                         >
                                             즉시 결제
                                         </Button>
@@ -360,18 +448,18 @@ const GoodsDetail: React.FC = () => {
                             ref={payModalRef}
                             title="결제"
                             content={
-                                <Payment
+                                <BuyoutPayment
                                     goodsName={goods?.goodsName ?? ""}
                                     payPrice={(goods?.buyoutPrice ?? 0) + (goods?.shippingPrice ?? 0)}
-                                    receiver={receiver}
-                                    setReceiver={setReceiver}
+                                    receiver={buyerName}
+                                    setReceiver={setBuyerName}
                                     phone={phone}
                                     setPhone={setPhone}
                                     address={address}
                                     setAddress={setAddress}
                                     detailAddress={detailAddress}
                                     setDetailAddress={setDetailAddress}
-                                    handleAddressSearch={handleAddressSearch}
+                                    handleAddressSearch={openAddressPopup}
                                 />
                             }
                             leftButtonContent="결제하기"

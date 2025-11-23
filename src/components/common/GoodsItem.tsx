@@ -146,12 +146,12 @@ const GoodsItem: React.FC<GoodsItemProps> = ({
 
                     <Box sx={{ display: 'flex', gap: 1.2, alignItems: 'center' }}>
                         <Box sx={{ fontWeight: 500, fontSize: 12, color: '#676666' }}>현재가</Box>
-                        <Box sx={{ fontWeight: 'bold', fontSize: 12, color: '#141414' }}>{bidPrice} 원</Box>
+                        <Box sx={{ fontWeight: 'bold', fontSize: 12, color: '#141414' }}>{bidPrice.toLocaleString()} 원</Box>
                     </Box>
 
                     <Box sx={{ display: 'flex', gap: 1.2, alignItems: 'center' }}>
                         <Box sx={{ fontWeight: 500, fontSize: 12, color: '#676666' }}>즉결가</Box>
-                        <Box sx={{ fontWeight: 'bold', fontSize: 12, color: '#DD8126' }}>{buyOutPrice} 원</Box>
+                        <Box sx={{ fontWeight: 'bold', fontSize: 12, color: '#DD8126' }}>{buyOutPrice.toLocaleString()} 원</Box>
                     </Box>
 
                     <Box sx={{ display: 'flex', gap: 1.2, alignItems: 'center' }}>

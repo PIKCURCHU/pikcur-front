@@ -107,7 +107,7 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ style }) => {
                         <Link 
                             href={`/categories/${hoveredCategory?.categoryId}`} // ✅ 카테고리 ID를 사용하여 링크 생성
                             underline="hover" 
-                            sx={{ fontWeight: 'bold', color: "black" }}
+                            sx={{ fontWeight: 'bold', color: "black" , cursor:'pointer'}}
                         >
                             {`${hoveredCategory?.categoryName} 전체보기 >`} {/* ✅ hoveredCategory.categoryName 사용 */}
                         </Link>
@@ -117,6 +117,7 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ style }) => {
                         {hoveredCategory?.subCategories.map((subCategory) => (
                             <Grid item xs={6} key={subCategory.categoryId} mt={1} mb={1}>
                                 <Link 
+                                    sx={{cursor:'pointer'}}
                                     onClick={()=>handleCategoryGoods(subCategory.categoryId)}
                                     underline="hover" 
                                     color="inherit"

@@ -19,6 +19,7 @@ interface bidItemProps {
   bidPrice: number;
   statusName: string;
   createDate: string;
+  goodsId: number;
 }
 
 
@@ -28,6 +29,7 @@ const WinBidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
   const [winbidList, setWinBidList] = useState<bidItemProps[]>([]);
 
   const formattedWinBidList = winbidList.map((bid, index) => ({
+    goodsId:bid.goodsId,
     bidId: bid.bidId,
     goodsName: bid.goodsName,
     bidPrice: bid.bidPrice.toLocaleString() + '원',
@@ -97,7 +99,7 @@ const WinBidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
         pay_method: 'card',
         merchant_uid: `mid_${new Date().getTime()}`,
         name: selectedItem.goodsName,
-        amount: selectedItem.bidPrice,
+        amount: payPrice,
         buyer_name: buyerName,
         buyer_tel: phone,
         buyer_addr: `${address} ${detailAddress}`,
@@ -110,33 +112,25 @@ const WinBidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
 
           console.log('이제 백엔드로 fetch 요청을 보냅니다...');
 
-          fetch('http://localhost:8080/payment/verify', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              impUid: rsp.imp_uid,
-              merchantUid: rsp.merchant_uid,
-              amount: selectedItem.bidPrice,
-              goodsId: selectedItem.bidId,
-            }),
+          api.post(`/payment/verify`, {
+            impUid: rsp.imp_uid,
+            merchantUid: rsp.merchant_uid,
+            amount: payPrice,
+            goodsId: selectedItem.goodsId,
           })
-            .then(res => {
-              if (!res.ok) {
-                console.error('백엔드 fetch 실패 (res.ok 아님)', res);
-                throw new Error('결제 검증 실패');
+          .then((res) => {
+              console.log("서버 응답:", res);
+          
+              if (res.status !== "success") {
+                  throw new Error('결제 검증 실패');
               }
-              return res.json();
-            })
-            .then(data => {
-              console.log('서버 검증 성공 ✅', data);
-              alert('결제가 정상적으로 처리되었습니다.');
-            })
-            .catch(err => {
-              console.error('fetch .catch 에러:', err);
-              alert('결제 검증 중 오류가 발생했습니다.');
-            });
+          
+              alert(res.message);
+          })
+          .catch((err) => {
+              console.error('axios .catch 에러:', err);
+              alert(err.message);
+          });
         } else {
           console.error('❌ 아임포트 결제 실패!', rsp);
           alert('❌ 결제가 실패하였습니다: ' + rsp.error_msg);
@@ -183,6 +177,7 @@ const WinBidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
           if (originalBidItem && originalBidItem.statusName === '낙찰') {
             api.get('/payment/info', { bidId: originalBidItem.bidId })
               .then((res) => {
+                console.log(res);
                 setPayPrice(res.payPrice);
                 setBuyerName(res.receiver);
                 setPhone(res.phone);

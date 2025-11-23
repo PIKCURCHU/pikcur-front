@@ -5,6 +5,8 @@ import { Typography } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../common/api";
+import mainImg from '../../assets/images/mainimg.jpg'
+
 
 interface GoodsItemProps {
     imagePath: string;
@@ -124,14 +126,17 @@ const MainPage: React.FC<{}> = ({}) => {
     return (
         <WithCategoryLayout
             topContent={
-            <div style={{
+            <div 
+            style={{
                 width:'100%',
                 height:'180px',
-                backgroundColor:'purple',
                 marginTop:'60px',
                 borderRadius:'8px'
             }}>
-                메인이미지
+                <img src={mainImg} alt="메인이미지" style={{
+                    width:'100%',
+                    height:'180px',
+                    borderRadius:'8px'}}/>
             </div>
         }
             middleBottomContent={

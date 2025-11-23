@@ -17,6 +17,7 @@ import {
 import { SelectChangeEvent } from '@mui/material/Select';
 import axios from 'axios';
 import { api } from '../../common/api';
+import { useNavigate } from 'react-router-dom';
 
 interface ImageState {
     file: File;
@@ -71,6 +72,8 @@ const GoodsForm: React.FC = () => {
 
     const [brandList, setBrandList] = useState<Brand[]>([]);
     const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get("http://localhost:8080/goods/categories")
@@ -161,8 +164,8 @@ const GoodsForm: React.FC = () => {
 
         api.form.post("http://localhost:8080/goods", {goodsData}, files)
             .then(res => {
-                console.log("상품 등록 성공", res);
-                // 성공 시 처리 로직 (예: 페이지 이동)
+                alert("상품 등록 성공");
+                navigate('/');
             })
             .catch(err => {
                 console.error("상품 등록 실패", err);
