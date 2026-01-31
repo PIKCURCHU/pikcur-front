@@ -3,7 +3,7 @@ import { logout } from "./utility";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+const API_BASE_URL = process.env.REACT_APP_API_URL || "";
 
 const instance = axios.create({
     baseURL: API_BASE_URL,
@@ -190,11 +190,15 @@ interface CustomStompClient extends Client {
     _alarmListener?: (body: any) => void;
 }
 
-const WEBSOCKET_API_URL = process.env.REACT_APP_WEBSOCKET_API_URL as string;
+const WEBSOCKET_API_URL = process.env.REACT_APP_WEBSOCKET_API_URL || "";
 
 export const createStompClient = () => {
     const token = localStorage.getItem("token");
-    const socket = new SockJS(WEBSOCKET_API_URL);
+    const socket = new SockJS(
+        WEBSOCKET_API_URL
+            ? WEBSOCKET_API_URL
+            : "/wc"   // ⭐ 운영용 상대경로
+    );
 
     const stompClient = new Client({
         webSocketFactory: () => socket,

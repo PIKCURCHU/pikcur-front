@@ -15,7 +15,6 @@ import {
     TextField
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
-import axios from 'axios';
 import { api } from '../../common/api';
 import { useNavigate } from 'react-router-dom';
 
@@ -76,16 +75,16 @@ const GoodsForm: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("http://localhost:8080/goods/categories")
+        api.get("/goods/categories")
             .then(res => {
-                setCategories(res.data);
+                setCategories(res);
                 setSelectedMainCategoryId(''); 
                 setSelectedSubCategoryId('');
                 setSelectedSizes([]); 
             })
             .catch(err => console.error("카테고리 불러오기 실패", err));
-        axios.get("http://localhost:8080/brand/list")
-            .then(res => setBrandList(res.data)) 
+        api.get("/brand/list")
+            .then(res => setBrandList(res)) 
     }, []);
     // 헬퍼: 현재 대분류 카테고리 객체 찾기
     const selectedMainCategory = categories.find(c => c.categoryId === selectedMainCategoryId);

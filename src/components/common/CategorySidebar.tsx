@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Box, List, ListItem, ListItemText, Popper, Paper, Grid, Typography, Link } from '@mui/material';
-import axios from 'axios'; // axios 임포트 추가
 import { api } from '../../common/api';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,9 +29,9 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ style }) => {
     const listRef = React.useRef<HTMLUListElement | null>(null);
 
     React.useEffect(() => {
-        axios.get<Category[]>("http://localhost:8080/goods/categories")
+        api.get<Category[]>("/goods/categories")
             .then(res => {
-                setCategories(res.data);
+                setCategories(res);
             })
             .catch(err => {
                 console.error("카테고리 불러오기 실패", err);
