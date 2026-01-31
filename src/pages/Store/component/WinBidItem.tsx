@@ -128,7 +128,7 @@ const WinBidItem: React.FC<{ storeId: number }> = ({ storeId }) => {
               alert(res.message);
           })
           .catch((err) => {
-              console.error('axios .catch 에러:', err);
+              console.error('.catch 에러:', err);
               alert(err.message);
           });
         } else {

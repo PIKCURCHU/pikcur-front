@@ -6,7 +6,6 @@ import CustomModal from '../../components/common/CustomModal';
 import CustomInput from '../../components/common/CustomInput';
 import { common } from '@mui/material/colors';
 import CustomTextarea from '../../components/common/CustomTextarea';
-import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import { api } from '../../common/api';
 
@@ -14,6 +13,7 @@ import { api } from '../../common/api';
 // 인터페이스 정의 (이전 코드와 동일)
 // ------------------------------------
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "";
 
 interface PaymentInfo {
     bidPrice: number;
@@ -84,7 +84,7 @@ const TransactionDetail: React.FC<{}> = () => {
         }
 
         window.open(
-          `http://localhost:8080/transactions/1/shipping?invoice=${transactionDetail?.buyerInfo.trackingNumber}&code=${transactionDetail?.buyerInfo.company}`,
+            API_BASE_URL + `/transactions/1/shipping?invoice=${transactionDetail?.buyerInfo.trackingNumber}&code=${transactionDetail?.buyerInfo.company}`,
           "_blank"
         );
       };
